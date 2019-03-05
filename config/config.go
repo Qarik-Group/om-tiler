@@ -19,7 +19,7 @@ type Opsman struct {
 type Tile struct {
 	Product  Product                `yaml:"product" validate:"required,dive"`
 	Features []string               `yaml:"features"`
-	Network  string                 `yaml:"network" validate:"required"`
+	Network  string                 `yaml:"network"`
 	Optional []string               `yaml:"optional"`
 	Resource []string               `yaml:"resource"`
 	Vars     map[string]interface{} `yaml:"vars"`
