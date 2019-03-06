@@ -1,10 +1,14 @@
 package configurator
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 func (c *Configurator) Apply() error {
@@ -19,7 +23,7 @@ func (c *Configurator) Apply() error {
 			return err
 		}
 
-		err = c.client.ConfigureProduct()
+		err = c.configureProduct(tile)
 		if err != nil {
 			return err
 		}
@@ -72,6 +76,63 @@ func (c *Configurator) downloadAndUploadProduct(p Product) error {
 	return c.client.UploadStemcell(UploadStemcellArgs{
 		StemcellFilePath: stemcell,
 	})
+}
+
+func (c *Configurator) configureProduct(t Tile) error {
+	ts := templateStore{base: t.Product.Slug, store: c.templateStore}
+
+	templateFile, err := ts.lookup("", "product")
+	if err != nil {
+		return err
+	}
+
+	var opsFiles []io.Reader
+	if err = ts.batchLookup("features", t.Features, &opsFiles, false); err != nil {
+		return err
+	}
+
+	if err = ts.batchLookup("optional", t.Optional, &opsFiles, false); err != nil {
+		return err
+	}
+
+	if err = ts.batchLookup("resource", t.Resource, &opsFiles, false); err != nil {
+		return err
+	}
+
+	if t.Network != "" {
+		network, err := ts.lookup("network", t.Network)
+		if err != nil {
+			return err
+		}
+		opsFiles = append(opsFiles, network)
+	}
+
+	var varsFiles []io.Reader
+	if err != ts.batchLookup("", []string{
+		"errand-vars", "product-default-vars", "resource-vars",
+	}, &varsFiles, true) {
+		return err
+	}
+
+	vars, err := yaml.Marshal(t.Vars)
+	if err != nil {
+		return err
+	}
+
+	varsFiles = append(varsFiles, bytes.NewReader(vars))
+
+	ic := interpolateConfig{
+		TemplateFile: templateFile,
+		OpsFiles:     opsFiles,
+		VarsFiles:    varsFiles,
+	}
+
+	tpl, err := ic.evaluate()
+	if err != nil {
+		return err
+	}
+
+	return c.client.ConfigureProduct(string(tpl))
 }
 
 func findFileInDir(dir, glob string) (string, error) {

@@ -23,6 +23,6 @@ type OpsmanClient interface {
 	DownloadProduct(DownloadProductArgs) error
 	UploadProduct(UploadProductArgs) error
 	UploadStemcell(UploadStemcellArgs) error
-	ConfigureProduct() error
+	ConfigureProduct(string) error
 	ApplyChanges() error
 }

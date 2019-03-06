@@ -1,4 +1,4 @@
-package template
+package configurator
 
 import (
 	"io"
@@ -10,13 +10,13 @@ import (
 	"github.com/cppforlife/go-patch/patch"
 )
 
-type InterpolateConfig struct {
+type interpolateConfig struct {
 	TemplateFile io.Reader
 	VarsFiles    []io.Reader
 	OpsFiles     []io.Reader
 }
 
-func (c *InterpolateConfig) Evaluate() ([]byte, error) {
+func (c *interpolateConfig) evaluate() ([]byte, error) {
 	template, err := ioutil.ReadAll(c.TemplateFile)
 	if err != nil {
 		return []byte{}, err
@@ -53,6 +53,7 @@ func (c *InterpolateConfig) Evaluate() ([]byte, error) {
 	evalOpts := boshtpl.EvaluateOpts{
 		UnescapedMultiline: true,
 		ExpectAllKeys:      true,
+		ExpectAllVarsUsed:  true,
 	}
 
 	bytes, err := tpl.Evaluate(staticVars, ops, evalOpts)

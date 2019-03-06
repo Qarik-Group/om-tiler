@@ -13,6 +13,23 @@ tiles:
     version: 1.2.3
     glob: "*.pivotal"
     stemcell_iaas: vsphere
+  network: 2-az-configuration
+  features:
+  - opsman-disable
+  optional:
+  - add-healthwatch-forwarder-foundation_name
+  resource:
+  - redis_elb_names
+  vars:
+    az2_name: z2
+    boshtasks/enable/bosh_taskcheck_password: password
+    boshtasks/enable/bosh_taskcheck_username: username
+    healthwatch-forwarder/foundation_name: example
+    healthwatch-forwarder/health_check_az: z1
+    network_name: network1
+    service_network_name: network2
+    singleton_availability_zone: network1
+    redis_elb_names: elb1
 - product:
     name: Small Footprint PAS
     slug: elastic-runtime

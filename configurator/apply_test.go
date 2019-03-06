@@ -103,7 +103,6 @@ var _ = Describe("Apply", func() {
 
 			sargs := fakeOpsman.UploadStemcellArgsForCall(0)
 			Expect(sargs.StemcellFilePath).To(HaveSuffix("stemcell-vsphere.tgz"))
-
 			sargs = fakeOpsman.UploadStemcellArgsForCall(1)
 			Expect(sargs.StemcellFilePath).To(HaveSuffix("stemcell-gcp.tgz"))
 		})

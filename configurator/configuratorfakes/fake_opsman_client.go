@@ -28,9 +28,10 @@ type FakeOpsmanClient struct {
 	configureAuthenticationReturnsOnCall map[int]struct {
 		result1 error
 	}
-	ConfigureProductStub        func() error
+	ConfigureProductStub        func(string) error
 	configureProductMutex       sync.RWMutex
 	configureProductArgsForCall []struct {
+		arg1 string
 	}
 	configureProductReturns struct {
 		result1 error
@@ -179,15 +180,16 @@ func (fake *FakeOpsmanClient) ConfigureAuthenticationReturnsOnCall(i int, result
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) ConfigureProduct() error {
+func (fake *FakeOpsmanClient) ConfigureProduct(arg1 string) error {
 	fake.configureProductMutex.Lock()
 	ret, specificReturn := fake.configureProductReturnsOnCall[len(fake.configureProductArgsForCall)]
 	fake.configureProductArgsForCall = append(fake.configureProductArgsForCall, struct {
-	}{})
-	fake.recordInvocation("ConfigureProduct", []interface{}{})
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("ConfigureProduct", []interface{}{arg1})
 	fake.configureProductMutex.Unlock()
 	if fake.ConfigureProductStub != nil {
-		return fake.ConfigureProductStub()
+		return fake.ConfigureProductStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
@@ -202,10 +204,17 @@ func (fake *FakeOpsmanClient) ConfigureProductCallCount() int {
 	return len(fake.configureProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) ConfigureProductCalls(stub func() error) {
+func (fake *FakeOpsmanClient) ConfigureProductCalls(stub func(string) error) {
 	fake.configureProductMutex.Lock()
 	defer fake.configureProductMutex.Unlock()
 	fake.ConfigureProductStub = stub
+}
+
+func (fake *FakeOpsmanClient) ConfigureProductArgsForCall(i int) string {
+	fake.configureProductMutex.RLock()
+	defer fake.configureProductMutex.RUnlock()
+	argsForCall := fake.configureProductArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeOpsmanClient) ConfigureProductReturns(result1 error) {
