@@ -1,6 +1,10 @@
 package config
 
-import validator "gopkg.in/go-playground/validator.v9"
+import (
+	"fmt"
+
+	validator "gopkg.in/go-playground/validator.v9"
+)
 
 type Deployment struct {
 	Opsman Opsman `yaml:"opsman" validate:"required,dive"`
@@ -34,5 +38,9 @@ type Product struct {
 }
 
 func (d *Deployment) Validate() error {
-	return validator.New().Struct(d)
+	err := validator.New().Struct(d)
+	if err != nil {
+		return fmt.Errorf("Deployment has error(s):\n%+v\n", err)
+	}
+	return nil
 }
