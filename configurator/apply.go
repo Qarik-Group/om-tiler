@@ -2,44 +2,10 @@ package configurator
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/starkandwayne/om-configurator/config"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
-
-type Configurator struct {
-	client        Opsman
-	deployment    *config.Deployment
-	logger        *log.Logger
-	templateStore http.FileSystem
-}
-
-func NewConfigurator(d *config.Deployment,
-	templateStore http.FileSystem,
-	newOpsman func(config.Opsman, *log.Logger) (Opsman, error),
-	logger *log.Logger) (*Configurator, error) {
-
-	err := d.Validate()
-	if err != nil {
-		return &Configurator{}, err
-	}
-
-	client, err := newOpsman(d.Opsman, logger)
-	if err != nil {
-		return &Configurator{}, err
-	}
-
-	logger.SetPrefix(fmt.Sprintf("%s[OM Configurator] ", logger.Prefix()))
-
-	configurator := Configurator{
-		client:        client,
-		deployment:    d,
-		logger:        logger,
-		templateStore: templateStore,
-	}
-	return &configurator, nil
-}
 
 func (c *Configurator) Apply() error {
 	err := c.client.ConfigureAuthentication()
@@ -65,4 +31,56 @@ func (c *Configurator) Apply() error {
 	}
 
 	return nil
+}
+
+func (c *Configurator) downloadAndUploadProduct(p Product) error {
+	dir, err := ioutil.TempDir("", p.Name)
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(dir)
+
+	err = c.client.DownloadProduct(DownloadProductArgs{
+		OutputDirectory:      dir,
+		PivnetProductSlug:    p.Slug,
+		PivnetProductVersion: p.Version,
+		PivnetProductGlob:    p.Glob,
+		StemcellIaas:         p.StemcellIaas,
+	})
+	if err != nil {
+		return err
+	}
+
+	tile, err := findFileInDir(dir, "*.pivotal")
+	if err != nil {
+		return err
+	}
+
+	err = c.client.UploadProduct(UploadProductArgs{
+		ProductFilePath:      tile,
+		PivnetProductVersion: p.Version,
+	})
+	if err != nil {
+		return err
+	}
+
+	stemcell, err := findFileInDir(dir, "*.tgz")
+	if err != nil {
+		return err
+	}
+
+	return c.client.UploadStemcell(UploadStemcellArgs{
+		StemcellFilePath: stemcell,
+	})
+}
+
+func findFileInDir(dir, glob string) (string, error) {
+	files, err := filepath.Glob(filepath.Join(dir, glob))
+	if err != nil {
+		return "", err
+	}
+	if len(files) != 1 {
+		return "", fmt.Errorf("no file found for %s in %s", glob, dir)
+	}
+	return files[0], nil
 }

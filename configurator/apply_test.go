@@ -11,7 +11,6 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/starkandwayne/om-configurator/config"
 	. "github.com/starkandwayne/om-configurator/configurator"
 	"github.com/starkandwayne/om-configurator/configurator/configuratorfakes"
 
@@ -22,8 +21,8 @@ import (
 var _ = Describe("Apply", func() {
 	var (
 		configurator *Configurator
-		fakeOpsman   *configuratorfakes.FakeOpsman
-		deployment   config.Deployment
+		fakeOpsman   *configuratorfakes.FakeOpsmanClient
+		deployment   Deployment
 	)
 
 	assetsDir := func() string {
@@ -41,7 +40,7 @@ var _ = Describe("Apply", func() {
 
 	Context("Given a deployment with products", func() {
 		BeforeEach(func() {
-			fakeOpsman = &configuratorfakes.FakeOpsman{
+			fakeOpsman = &configuratorfakes.FakeOpsmanClient{
 				DownloadProductStub: func(c DownloadProductArgs) error {
 					_, err := os.Create(filepath.Join(
 						c.OutputDirectory,
@@ -61,7 +60,7 @@ var _ = Describe("Apply", func() {
 					return nil
 				},
 			}
-			newOpsman := func(_ config.Opsman, _ *log.Logger) (Opsman, error) {
+			newOpsman := func(_ Opsman, _ *log.Logger) (OpsmanClient, error) {
 				return fakeOpsman, nil
 			}
 			err := loadYAMLAsset("deployment_with_tiles.yml", &deployment)
