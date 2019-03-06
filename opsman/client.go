@@ -2,10 +2,8 @@ package opsman
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/gosuri/uilive"
@@ -15,6 +13,7 @@ import (
 	"github.com/pivotal-cf/om/network"
 	"github.com/pivotal-cf/om/progress"
 	"github.com/starkandwayne/om-configurator/config"
+	"github.com/starkandwayne/om-configurator/configurator"
 )
 
 type Client struct {
@@ -76,71 +75,44 @@ func (c *Client) ConfigureAuthentication() error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) UploadProduct(p *config.Product) error {
-	dir, err := ioutil.TempDir("", p.Name)
-	if err != nil {
-		return err
-	}
-	defer os.RemoveAll(dir)
-	dargs := []string{
-		fmt.Sprintf("--output-directory=%s", dir),
+func (c *Client) DownloadProduct(a *configurator.DownloadProductArgs) error {
+	args := []string{
+		fmt.Sprintf("--output-directory=%s", a.OutputDirectory),
 		fmt.Sprintf("--pivnet-api-token=%s", c.config.PivnetToken),
-		fmt.Sprintf("--pivnet-product-slug=%s", p.Slug),
-		fmt.Sprintf("--pivnet-product-version=%s", p.Version),
-		fmt.Sprintf("--pivnet-product-glob=%s", p.Glob),
-		fmt.Sprintf("--stemcell-iaas=%s", p.StemcellIaas),
+		fmt.Sprintf("--pivnet-product-slug=%s", a.PivnetProductSlug),
+		fmt.Sprintf("--pivnet-product-version=%s", a.PivnetProductVersion),
+		fmt.Sprintf("--pivnet-product-glob=%s", a.PivnetProductGlob),
+		fmt.Sprintf("--stemcell-iaas=%s", a.StemcellIaas),
 		"--download-stemcell",
 	}
 	pivnetFactory := commands.DefaultPivnetFactory
 	stower := commands.DefaultStow{}
-	dcmd := commands.NewDownloadProduct(os.Environ, c.log, c.log, pivnetFactory, stower)
-	err := dcmd.Execute(dargs)
-	if err != nil {
-		return err
-	}
-
-	pFile, err := filepath.Glob(filepath.Join(dir, "*.pivotal"))
-	if err != nil {
-		return err
-	}
-	if len(pFile) != 1 {
-		return error.New(fmt.Sprintf("No tile found for %s in %s", p.Name, dir))
-	}
-
-	upargs := []string{
-		fmt.Sprintf("--product=%s", pFile[0]),
-		fmt.Sprintf("--product-version=%s", p.Version),
-		fmt.Sprintf("--polling-interval=%s", pollingIntervalSec),
-	}
-	pform := formcontent.NewForm()
-	upcmd := commands.NewUploadProduct(pform, metadataExtractor, c.api, c.log)
-	err = upcmd.Execute(upargs)
-	if err != nil {
-		return err
-	}
-
-	sFile, err := filepath.Glob(filepath.Join(dir, "*.tgz"))
-	if err != nil {
-		return err
-	}
-	if len(sFile) != 1 {
-		return error.New(fmt.Sprintf("No stemcell found for %s in %s", p.Name, dir))
-	}
-
-	usargs := []string{
-		fmt.Sprintf("--stemcell=%s", sFile[0]),
-		"--floating",
-	}
-	sform := formcontent.NewForm()
-	uscmd := commands.NewUploadStemcell(sform, c.api, c.log)
-	err = uscmd.Execute(usargs)
-	if err != nil {
-		return err
-	}
-	return nil
+	cmd := commands.NewDownloadProduct(os.Environ, c.log, c.log, pivnetFactory, stower)
+	return cmd.Execute(args)
 }
 
-func (c *Client) ConfigureProduct(*config.Tile) error {
+func (c *Client) UploadProduct(a *configurator.UploadProductArgs) error {
+	args := []string{
+		fmt.Sprintf("--product=%s", a.ProductFilePath),
+		fmt.Sprintf("--product-version=%s", a.PivnetProductVersion),
+		fmt.Sprintf("--polling-interval=%s", pollingIntervalSec),
+	}
+	form := formcontent.NewForm()
+	cmd := commands.NewUploadProduct(form, metadataExtractor, c.api, c.log)
+	return cmd.Execute(args)
+}
+
+func (c *Client) UploadStemcell(a *configurator.UploadStemcellArgs) error {
+	args := []string{
+		fmt.Sprintf("--stemcell=%s", a.StemcellFilePath),
+		"--floating",
+	}
+	form := formcontent.NewForm()
+	cmd := commands.NewUploadStemcell(form, c.api, c.log)
+	return uscmd.Execute(args)
+}
+
+func (c *Client) ConfigureProduct() error {
 
 }
 
