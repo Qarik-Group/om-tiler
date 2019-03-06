@@ -26,6 +26,8 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/maxbrunsfeld/counterfeiter v0.0.0-20190111051351-d7285d544cff // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
+	github.com/onsi/ginkgo v1.7.0
+	github.com/onsi/gomega v1.4.3
 	github.com/openzipkin/zipkin-go v0.1.5 // indirect
 	github.com/pivotal-cf/om v0.0.0-20190304232807-76c93d1e75cc
 	github.com/pkg/errors v0.8.1 // indirect

@@ -54,7 +54,7 @@ func (c *Configurator) downloadAndUploadProduct(p config.Product) error {
 		return err
 	}
 
-	tile, err := findFileInDir(dir, "*pivotal")
+	tile, err := findFileInDir(dir, "*.pivotal")
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (c *Configurator) downloadAndUploadProduct(p config.Product) error {
 		return err
 	}
 
-	stemcell, err := findFileInDir(dir, "*tgz")
+	stemcell, err := findFileInDir(dir, "*.tgz")
 	if err != nil {
 		return err
 	}

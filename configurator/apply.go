@@ -12,15 +12,20 @@ type Configurator struct {
 	client        Opsman
 	deployment    *config.Deployment
 	logger        *log.Logger
-	templateStore *http.FileSystem
+	templateStore http.FileSystem
 }
 
 func NewConfigurator(d *config.Deployment,
-	templateStore *http.FileSystem,
-	newOpsman func(*config.Opsman, *log.Logger) (Opsman, error),
+	templateStore http.FileSystem,
+	newOpsman func(config.Opsman, *log.Logger) (Opsman, error),
 	logger *log.Logger) (*Configurator, error) {
 
-	client, err := newOpsman(&d.Opsman, logger)
+	err := d.Validate()
+	if err != nil {
+		return &Configurator{}, err
+	}
+
+	client, err := newOpsman(d.Opsman, logger)
 	if err != nil {
 		return &Configurator{}, err
 	}
@@ -37,12 +42,7 @@ func NewConfigurator(d *config.Deployment,
 }
 
 func (c *Configurator) Apply() error {
-	err := c.deployment.Validate()
-	if err != nil {
-		return err
-	}
-
-	err = c.client.ConfigureAuthentication()
+	err := c.client.ConfigureAuthentication()
 	if err != nil {
 		return err
 	}
