@@ -20,9 +20,8 @@ import (
 
 var _ = Describe("Apply", func() {
 	var (
-		configurator *Configurator
-		fakeOpsman   *configuratorfakes.FakeOpsmanClient
-		deployment   Deployment
+		fakeOpsman *configuratorfakes.FakeOpsmanClient
+		deployment Deployment
 	)
 
 	assetsDir := func() string {
@@ -30,12 +29,17 @@ var _ = Describe("Apply", func() {
 		return filepath.Join(filepath.Dir(filename), "assets")
 	}
 
-	loadYAMLAsset := func(file string, out interface{}) error {
+	loadYAMLAsset := func(file string, out interface{}) {
 		data, err := ioutil.ReadFile(filepath.Join(assetsDir(), file))
 		Expect(err).ToNot(HaveOccurred())
 		err = yaml.Unmarshal(data, out)
 		Expect(err).ToNot(HaveOccurred())
-		return nil
+	}
+
+	readAsset := func(file string) []byte {
+		data, err := ioutil.ReadFile(filepath.Join(assetsDir(), file))
+		Expect(err).ToNot(HaveOccurred())
+		return data
 	}
 
 	Context("Given a deployment with products", func() {
@@ -63,19 +67,17 @@ var _ = Describe("Apply", func() {
 			newOpsman := func(_ Opsman, _ *log.Logger) (OpsmanClient, error) {
 				return fakeOpsman, nil
 			}
-			err := loadYAMLAsset("deployment_with_tiles.yml", &deployment)
-			Expect(err).ToNot(HaveOccurred())
+			loadYAMLAsset("deployment_with_tiles.yml", &deployment)
 
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
-			configurator, err = NewConfigurator(&deployment, templateStore, newOpsman, logger)
+			configurator, err := NewConfigurator(&deployment, templateStore, newOpsman, logger)
+			Expect(err).ToNot(HaveOccurred())
+			err = configurator.Apply()
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("Downloads the tiles and stemcells from Pivotal Network", func() {
-			err := configurator.Apply()
-			Expect(err).ToNot(HaveOccurred())
-
 			args := fakeOpsman.DownloadProductArgsForCall(0)
 			Expect(args.PivnetProductSlug).To(Equal("p-healthwatch"))
 			Expect(args.PivnetProductVersion).To(Equal("1.2.3"))
@@ -90,21 +92,19 @@ var _ = Describe("Apply", func() {
 		})
 
 		It("Uploads the tiles and stemcells to Ops Manager", func() {
-			err := configurator.Apply()
-			Expect(err).ToNot(HaveOccurred())
+			Expect(fakeOpsman.UploadProductArgsForCall(0)).
+				To(HaveSuffix("p-healthwatch-1.2.3.pivotal"))
+			Expect(fakeOpsman.UploadStemcellArgsForCall(0)).
+				To(HaveSuffix("stemcell-vsphere.tgz"))
+			Expect(fakeOpsman.UploadProductArgsForCall(1)).
+				To(HaveSuffix("elastic-runtime-3.2.1.pivotal"))
+			Expect(fakeOpsman.UploadStemcellArgsForCall(1)).
+				To(HaveSuffix("stemcell-gcp.tgz"))
+		})
 
-			args := fakeOpsman.UploadProductArgsForCall(0)
-			Expect(args.ProductFilePath).To(HaveSuffix("p-healthwatch-1.2.3.pivotal"))
-			Expect(args.PivnetProductVersion).To(Equal("1.2.3"))
-
-			args = fakeOpsman.UploadProductArgsForCall(1)
-			Expect(args.ProductFilePath).To(HaveSuffix("elastic-runtime-3.2.1.pivotal"))
-			Expect(args.PivnetProductVersion).To(Equal("3.2.1"))
-
-			sargs := fakeOpsman.UploadStemcellArgsForCall(0)
-			Expect(sargs.StemcellFilePath).To(HaveSuffix("stemcell-vsphere.tgz"))
-			sargs = fakeOpsman.UploadStemcellArgsForCall(1)
-			Expect(sargs.StemcellFilePath).To(HaveSuffix("stemcell-gcp.tgz"))
+		It("Configures the products", func() {
+			config := fakeOpsman.ConfigureProductArgsForCall(0)
+			Expect(config).To(MatchYAML(readAsset("p-healthwatch-merged.yml")))
 		})
 	})
 

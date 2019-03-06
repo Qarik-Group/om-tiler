@@ -30,6 +30,7 @@ tiles:
     service_network_name: network2
     singleton_availability_zone: network1
     redis_elb_names: elb1
+    healthwatch-forwarder_instances: 5
 - product:
     name: Small Footprint PAS
     slug: elastic-runtime

@@ -28,10 +28,10 @@ type FakeOpsmanClient struct {
 	configureAuthenticationReturnsOnCall map[int]struct {
 		result1 error
 	}
-	ConfigureProductStub        func(string) error
+	ConfigureProductStub        func([]byte) error
 	configureProductMutex       sync.RWMutex
 	configureProductArgsForCall []struct {
-		arg1 string
+		arg1 []byte
 	}
 	configureProductReturns struct {
 		result1 error
@@ -50,10 +50,10 @@ type FakeOpsmanClient struct {
 	downloadProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UploadProductStub        func(configurator.UploadProductArgs) error
+	UploadProductStub        func(string) error
 	uploadProductMutex       sync.RWMutex
 	uploadProductArgsForCall []struct {
-		arg1 configurator.UploadProductArgs
+		arg1 string
 	}
 	uploadProductReturns struct {
 		result1 error
@@ -61,10 +61,10 @@ type FakeOpsmanClient struct {
 	uploadProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UploadStemcellStub        func(configurator.UploadStemcellArgs) error
+	UploadStemcellStub        func(string) error
 	uploadStemcellMutex       sync.RWMutex
 	uploadStemcellArgsForCall []struct {
-		arg1 configurator.UploadStemcellArgs
+		arg1 string
 	}
 	uploadStemcellReturns struct {
 		result1 error
@@ -180,13 +180,18 @@ func (fake *FakeOpsmanClient) ConfigureAuthenticationReturnsOnCall(i int, result
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) ConfigureProduct(arg1 string) error {
+func (fake *FakeOpsmanClient) ConfigureProduct(arg1 []byte) error {
+	var arg1Copy []byte
+	if arg1 != nil {
+		arg1Copy = make([]byte, len(arg1))
+		copy(arg1Copy, arg1)
+	}
 	fake.configureProductMutex.Lock()
 	ret, specificReturn := fake.configureProductReturnsOnCall[len(fake.configureProductArgsForCall)]
 	fake.configureProductArgsForCall = append(fake.configureProductArgsForCall, struct {
-		arg1 string
-	}{arg1})
-	fake.recordInvocation("ConfigureProduct", []interface{}{arg1})
+		arg1 []byte
+	}{arg1Copy})
+	fake.recordInvocation("ConfigureProduct", []interface{}{arg1Copy})
 	fake.configureProductMutex.Unlock()
 	if fake.ConfigureProductStub != nil {
 		return fake.ConfigureProductStub(arg1)
@@ -204,13 +209,13 @@ func (fake *FakeOpsmanClient) ConfigureProductCallCount() int {
 	return len(fake.configureProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) ConfigureProductCalls(stub func(string) error) {
+func (fake *FakeOpsmanClient) ConfigureProductCalls(stub func([]byte) error) {
 	fake.configureProductMutex.Lock()
 	defer fake.configureProductMutex.Unlock()
 	fake.ConfigureProductStub = stub
 }
 
-func (fake *FakeOpsmanClient) ConfigureProductArgsForCall(i int) string {
+func (fake *FakeOpsmanClient) ConfigureProductArgsForCall(i int) []byte {
 	fake.configureProductMutex.RLock()
 	defer fake.configureProductMutex.RUnlock()
 	argsForCall := fake.configureProductArgsForCall[i]
@@ -300,11 +305,11 @@ func (fake *FakeOpsmanClient) DownloadProductReturnsOnCall(i int, result1 error)
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) UploadProduct(arg1 configurator.UploadProductArgs) error {
+func (fake *FakeOpsmanClient) UploadProduct(arg1 string) error {
 	fake.uploadProductMutex.Lock()
 	ret, specificReturn := fake.uploadProductReturnsOnCall[len(fake.uploadProductArgsForCall)]
 	fake.uploadProductArgsForCall = append(fake.uploadProductArgsForCall, struct {
-		arg1 configurator.UploadProductArgs
+		arg1 string
 	}{arg1})
 	fake.recordInvocation("UploadProduct", []interface{}{arg1})
 	fake.uploadProductMutex.Unlock()
@@ -324,13 +329,13 @@ func (fake *FakeOpsmanClient) UploadProductCallCount() int {
 	return len(fake.uploadProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) UploadProductCalls(stub func(configurator.UploadProductArgs) error) {
+func (fake *FakeOpsmanClient) UploadProductCalls(stub func(string) error) {
 	fake.uploadProductMutex.Lock()
 	defer fake.uploadProductMutex.Unlock()
 	fake.UploadProductStub = stub
 }
 
-func (fake *FakeOpsmanClient) UploadProductArgsForCall(i int) configurator.UploadProductArgs {
+func (fake *FakeOpsmanClient) UploadProductArgsForCall(i int) string {
 	fake.uploadProductMutex.RLock()
 	defer fake.uploadProductMutex.RUnlock()
 	argsForCall := fake.uploadProductArgsForCall[i]
@@ -360,11 +365,11 @@ func (fake *FakeOpsmanClient) UploadProductReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) UploadStemcell(arg1 configurator.UploadStemcellArgs) error {
+func (fake *FakeOpsmanClient) UploadStemcell(arg1 string) error {
 	fake.uploadStemcellMutex.Lock()
 	ret, specificReturn := fake.uploadStemcellReturnsOnCall[len(fake.uploadStemcellArgsForCall)]
 	fake.uploadStemcellArgsForCall = append(fake.uploadStemcellArgsForCall, struct {
-		arg1 configurator.UploadStemcellArgs
+		arg1 string
 	}{arg1})
 	fake.recordInvocation("UploadStemcell", []interface{}{arg1})
 	fake.uploadStemcellMutex.Unlock()
@@ -384,13 +389,13 @@ func (fake *FakeOpsmanClient) UploadStemcellCallCount() int {
 	return len(fake.uploadStemcellArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) UploadStemcellCalls(stub func(configurator.UploadStemcellArgs) error) {
+func (fake *FakeOpsmanClient) UploadStemcellCalls(stub func(string) error) {
 	fake.uploadStemcellMutex.Lock()
 	defer fake.uploadStemcellMutex.Unlock()
 	fake.UploadStemcellStub = stub
 }
 
-func (fake *FakeOpsmanClient) UploadStemcellArgsForCall(i int) configurator.UploadStemcellArgs {
+func (fake *FakeOpsmanClient) UploadStemcellArgsForCall(i int) string {
 	fake.uploadStemcellMutex.RLock()
 	defer fake.uploadStemcellMutex.RUnlock()
 	argsForCall := fake.uploadStemcellArgsForCall[i]

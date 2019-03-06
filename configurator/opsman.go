@@ -8,21 +8,12 @@ type DownloadProductArgs struct {
 	StemcellIaas         string
 }
 
-type UploadProductArgs struct {
-	ProductFilePath      string
-	PivnetProductVersion string
-}
-
-type UploadStemcellArgs struct {
-	StemcellFilePath string
-}
-
 //go:generate counterfeiter . OpsmanClient
 type OpsmanClient interface {
 	ConfigureAuthentication() error
 	DownloadProduct(DownloadProductArgs) error
-	UploadProduct(UploadProductArgs) error
-	UploadStemcell(UploadStemcellArgs) error
-	ConfigureProduct(string) error
+	UploadProduct(string) error
+	UploadStemcell(string) error
+	ConfigureProduct([]byte) error
 	ApplyChanges() error
 }

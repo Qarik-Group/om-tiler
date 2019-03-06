@@ -2,6 +2,7 @@ package opsman
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -91,10 +92,9 @@ func (c *Client) DownloadProduct(a *configurator.DownloadProductArgs) error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) UploadProduct(a *configurator.UploadProductArgs) error {
+func (c *Client) UploadProduct(productFile string) error {
 	args := []string{
-		fmt.Sprintf("--product=%s", a.ProductFilePath),
-		fmt.Sprintf("--product-version=%s", a.PivnetProductVersion),
+		fmt.Sprintf("--product=%s", productFile),
 		fmt.Sprintf("--polling-interval=%s", pollingIntervalSec),
 	}
 	form := formcontent.NewForm()
@@ -102,9 +102,9 @@ func (c *Client) UploadProduct(a *configurator.UploadProductArgs) error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) UploadStemcell(a *configurator.UploadStemcellArgs) error {
+func (c *Client) UploadStemcell(stemcell string) error {
 	args := []string{
-		fmt.Sprintf("--stemcell=%s", a.StemcellFilePath),
+		fmt.Sprintf("--stemcell=%s", stemcell),
 		"--floating",
 	}
 	form := formcontent.NewForm()
@@ -112,8 +112,27 @@ func (c *Client) UploadStemcell(a *configurator.UploadStemcellArgs) error {
 	return uscmd.Execute(args)
 }
 
-func (c *Client) ConfigureProduct() error {
+func (c *Client) ConfigureProduct(config []byte) error {
+	configFile, err := ioutil.TempFile("", "config")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(configFile.Name())
 
+	if _, err = configFile.Write(config); err != nil {
+		return err
+	}
+
+	if err = configFile.Close(); err != nil {
+		return err
+	}
+
+	args := []string{
+		fmt.Sprintf("--config=%s", configFile.Name()),
+	}
+	cmd := commands.NewConfigureProduct(
+		os.Environ, c.api, c.Opsman.Target, c.log, c.log)
+	return uscmd.Execute(args)
 }
 
 func (c *Client) ApplyChanges() error {

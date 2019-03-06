@@ -38,7 +38,7 @@ func (c *Configurator) Apply() error {
 }
 
 func (c *Configurator) downloadAndUploadProduct(p Product) error {
-	dir, err := ioutil.TempDir("", p.Name)
+	dir, err := ioutil.TempDir("", p.Slug)
 	if err != nil {
 		return err
 	}
@@ -60,11 +60,7 @@ func (c *Configurator) downloadAndUploadProduct(p Product) error {
 		return err
 	}
 
-	err = c.client.UploadProduct(UploadProductArgs{
-		ProductFilePath:      tile,
-		PivnetProductVersion: p.Version,
-	})
-	if err != nil {
+	if err = c.client.UploadProduct(tile); err != nil {
 		return err
 	}
 
@@ -73,9 +69,7 @@ func (c *Configurator) downloadAndUploadProduct(p Product) error {
 		return err
 	}
 
-	return c.client.UploadStemcell(UploadStemcellArgs{
-		StemcellFilePath: stemcell,
-	})
+	return c.client.UploadStemcell(stemcell)
 }
 
 func (c *Configurator) configureProduct(t Tile) error {
@@ -132,7 +126,7 @@ func (c *Configurator) configureProduct(t Tile) error {
 		return err
 	}
 
-	return c.client.ConfigureProduct(string(tpl))
+	return c.client.ConfigureProduct(tpl)
 }
 
 func findFileInDir(dir, glob string) (string, error) {
