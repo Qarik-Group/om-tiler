@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 func NewInt(set *flag.FlagSet, field reflect.Value, tags reflect.StructTag) (*Flag, error) {
@@ -34,17 +35,29 @@ func NewInt(set *flag.FlagSet, field reflect.Value, tags reflect.StructTag) (*Fl
 		f.name = fmt.Sprintf("--%s", long)
 	}
 
+	alias, ok := tags.Lookup("alias")
+	if ok {
+		set.IntVar(field.Addr().Interface().(*int), alias, int(defaultValue), "")
+		f.flags = append(f.flags, set.Lookup(alias))
+		f.name = fmt.Sprintf("--%s", alias)
+	}
+
 	env, ok := tags.Lookup("env")
 	if ok {
-		envStr := os.Getenv(env)
-		if envStr != "" {
-			envValue, err := strconv.ParseInt(envStr, 0, 0)
-			if err != nil {
-				return &Flag{}, fmt.Errorf("could not parse int environment variable %s value %q: %s", env, envStr, err)
-			}
+		envOpts := strings.Split(env, ",")
 
-			field.SetInt(envValue)
-			f.set = true
+		for _, envOpt := range envOpts {
+			envStr := os.Getenv(envOpt)
+			if envStr != "" {
+				envValue, err := strconv.ParseInt(envStr, 0, 0)
+				if err != nil {
+					return &Flag{}, fmt.Errorf("could not parse int environment variable %s value %q: %s", envOpt, envStr, err)
+				}
+
+				field.SetInt(envValue)
+				f.set = true
+				break
+			}
 		}
 	}
 

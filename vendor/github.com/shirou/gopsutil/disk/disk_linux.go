@@ -241,7 +241,7 @@ func PartitionsWithContext(ctx context.Context, all bool) ([]PartitionStat, erro
 		fields := strings.Fields(line)
 		d := PartitionStat{
 			Device:     fields[0],
-			Mountpoint: fields[1],
+			Mountpoint: unescapeFstab(fields[1]),
 			Fstype:     fields[2],
 			Opts:       fields[3],
 		}
@@ -433,7 +433,7 @@ func GetLabel(name string) string {
 	if err != nil {
 		return ""
 	} else {
-		return string(dmname)
+		return strings.TrimSpace(string(dmname))
 	}
 }
 

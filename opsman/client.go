@@ -8,8 +8,10 @@ import (
 	"time"
 
 	"github.com/gosuri/uilive"
+	"github.com/pivotal-cf/go-pivnet/logshim"
 	"github.com/pivotal-cf/om/api"
 	"github.com/pivotal-cf/om/commands"
+	"github.com/pivotal-cf/om/extractor"
 	"github.com/pivotal-cf/om/formcontent"
 	"github.com/pivotal-cf/om/network"
 	"github.com/pivotal-cf/om/progress"
@@ -19,7 +21,7 @@ import (
 type Client struct {
 	api    api.Api
 	log    *log.Logger
-	config config.Opsman
+	config configurator.Opsman
 }
 
 const (
@@ -28,7 +30,7 @@ const (
 	pollingIntervalSec = time.Duration(10) * time.Second
 )
 
-func NewClient(c config.Opsman, logger *log.Logger) (*Client, error) {
+func NewClient(c configurator.Opsman, logger *log.Logger) (*Client, error) {
 	oauthClient, err := network.NewOAuthClient(
 		c.Target, c.Username, c.Password, "", "",
 		c.SkipSSLVerification, true,
@@ -71,7 +73,7 @@ func (c *Client) ConfigureAuthentication() error {
 		fmt.Sprintf("--password=%s", c.config.Password),
 		fmt.Sprintf("--decryption-passphrase=%s", c.config.DecryptionPassphrase),
 	}
-	cmd := commands.NewConfigureAuthentication(c.api, c.log, c.log)
+	cmd := commands.NewConfigureAuthentication(c.api, c.log)
 	return cmd.Execute(args)
 }
 
@@ -87,7 +89,8 @@ func (c *Client) DownloadProduct(a *configurator.DownloadProductArgs) error {
 	}
 	pivnetFactory := commands.DefaultPivnetFactory
 	stower := commands.DefaultStow{}
-	cmd := commands.NewDownloadProduct(os.Environ, c.log, c.log, pivnetFactory, stower)
+	pivnetLogWriter := logshim.NewLogShim(c.log, c.log, false)
+	cmd := commands.NewDownloadProduct(os.Environ, pivnetLogWriter, os.Stdout, pivnetFactory, stower)
 	return cmd.Execute(args)
 }
 
@@ -97,6 +100,7 @@ func (c *Client) UploadProduct(productFile string) error {
 		fmt.Sprintf("--polling-interval=%s", pollingIntervalSec),
 	}
 	form := formcontent.NewForm()
+	metadataExtractor := extractor.MetadataExtractor{}
 	cmd := commands.NewUploadProduct(form, metadataExtractor, c.api, c.log)
 	return cmd.Execute(args)
 }
@@ -108,7 +112,7 @@ func (c *Client) UploadStemcell(stemcell string) error {
 	}
 	form := formcontent.NewForm()
 	cmd := commands.NewUploadStemcell(form, c.api, c.log)
-	return uscmd.Execute(args)
+	return cmd.Execute(args)
 }
 
 func (c *Client) ConfigureProduct(config []byte) error {
@@ -130,10 +134,10 @@ func (c *Client) ConfigureProduct(config []byte) error {
 		fmt.Sprintf("--config=%s", configFile.Name()),
 	}
 	cmd := commands.NewConfigureProduct(
-		os.Environ, c.api, c.Opsman.Target, c.log, c.log)
-	return uscmd.Execute(args)
+		os.Environ, c.api, c.config.Target, c.log)
+	return cmd.Execute(args)
 }
 
 func (c *Client) ApplyChanges() error {
-
+	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 func NewInt64(set *flag.FlagSet, field reflect.Value, tags reflect.StructTag) (*Flag, error) {
@@ -34,17 +35,29 @@ func NewInt64(set *flag.FlagSet, field reflect.Value, tags reflect.StructTag) (*
 		f.name = fmt.Sprintf("--%s", long)
 	}
 
+	alias, ok := tags.Lookup("alias")
+	if ok {
+		set.Int64Var(field.Addr().Interface().(*int64), alias, defaultValue, "")
+		f.flags = append(f.flags, set.Lookup(alias))
+		f.name = fmt.Sprintf("--%s", alias)
+	}
+
 	env, ok := tags.Lookup("env")
 	if ok {
-		envStr := os.Getenv(env)
-		if envStr != "" {
-			envValue, err := strconv.ParseInt(envStr, 0, 64)
-			if err != nil {
-				return &Flag{}, fmt.Errorf("could not parse int64 environment variable %s value %q: %s", env, envStr, err)
-			}
+		envOpts := strings.Split(env, ",")
 
-			field.SetInt(envValue)
-			f.set = true
+		for _, envOpt := range envOpts {
+			envStr := os.Getenv(envOpt)
+			if envStr != "" {
+				envValue, err := strconv.ParseInt(envStr, 0, 64)
+				if err != nil {
+					return &Flag{}, fmt.Errorf("could not parse int64 environment variable %s value %q: %s", envOpt, envStr, err)
+				}
+
+				field.SetInt(envValue)
+				f.set = true
+				break
+			}
 		}
 	}
 

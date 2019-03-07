@@ -1,28 +1,28 @@
-# github.com/PuerkitoBio/goquery v1.4.0
+# github.com/PuerkitoBio/goquery v1.5.0
 github.com/PuerkitoBio/goquery
-# github.com/StackExchange/wmi v0.0.0-20180725035823-b12b22c5341f
+# github.com/StackExchange/wmi v0.0.0-20181212234831-e0a55b97c705
 github.com/StackExchange/wmi
 # github.com/andybalholm/cascadia v1.0.0
 github.com/andybalholm/cascadia
-# github.com/aws/aws-sdk-go v1.16.27
+# github.com/aws/aws-sdk-go v1.17.12
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
+github.com/aws/aws-sdk-go/aws/corehandlers
 github.com/aws/aws-sdk-go/aws/credentials
+github.com/aws/aws-sdk-go/aws/request
 github.com/aws/aws-sdk-go/aws/session
 github.com/aws/aws-sdk-go/service/s3
 github.com/aws/aws-sdk-go/aws/endpoints
 github.com/aws/aws-sdk-go/internal/sdkio
 github.com/aws/aws-sdk-go/internal/ini
 github.com/aws/aws-sdk-go/internal/shareddefaults
+github.com/aws/aws-sdk-go/aws/awsutil
+github.com/aws/aws-sdk-go/aws/client/metadata
 github.com/aws/aws-sdk-go/aws/client
-github.com/aws/aws-sdk-go/aws/corehandlers
 github.com/aws/aws-sdk-go/aws/credentials/processcreds
 github.com/aws/aws-sdk-go/aws/credentials/stscreds
 github.com/aws/aws-sdk-go/aws/csm
 github.com/aws/aws-sdk-go/aws/defaults
-github.com/aws/aws-sdk-go/aws/request
-github.com/aws/aws-sdk-go/aws/awsutil
-github.com/aws/aws-sdk-go/aws/client/metadata
 github.com/aws/aws-sdk-go/aws/signer/v4
 github.com/aws/aws-sdk-go/internal/s3err
 github.com/aws/aws-sdk-go/private/protocol
@@ -43,17 +43,17 @@ github.com/aws/aws-sdk-go/private/protocol/query/queryutil
 github.com/bmatcuk/doublestar
 # github.com/charlievieth/fs v0.0.0-20170613215519-7dc373669fa1
 github.com/charlievieth/fs
-# github.com/cloudfoundry/bosh-cli v3.0.1+incompatible
+# github.com/cloudfoundry/bosh-cli v5.4.0+incompatible
 github.com/cloudfoundry/bosh-cli/director/template
-# github.com/cloudfoundry/bosh-utils v0.0.0-20180515235324-fad7a5ad622c
+# github.com/cloudfoundry/bosh-utils v0.0.0-20190206192830-9a0affed2bf1
 github.com/cloudfoundry/bosh-utils/errors
 github.com/cloudfoundry/bosh-utils/system
 github.com/cloudfoundry/bosh-utils/logger
-# github.com/cppforlife/go-patch v0.1.0
+# github.com/cppforlife/go-patch v0.2.0
 github.com/cppforlife/go-patch/patch
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
-# github.com/go-ole/go-ole v1.2.1
+# github.com/go-ole/go-ole v1.2.4
 github.com/go-ole/go-ole
 github.com/go-ole/go-ole/oleutil
 # github.com/go-playground/locales v0.12.1
@@ -61,40 +61,77 @@ github.com/go-playground/locales
 github.com/go-playground/locales/currency
 # github.com/go-playground/universal-translator v0.16.0
 github.com/go-playground/universal-translator
-# github.com/golang/protobuf v1.2.0
+# github.com/golang/protobuf v1.3.0
 github.com/golang/protobuf/proto
-# github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135
+# github.com/google/go-querystring v1.0.0
 github.com/google/go-querystring/query
 # github.com/gosuri/uilive v0.0.0-20170323041506-ac356e6e42cd
 github.com/gosuri/uilive
-# github.com/graymeta/stow v0.0.0-20181228161447-b469cfb112f8
+# github.com/graymeta/stow v0.0.0-20181228161447-b469cfb112f8 => github.com/jtarchie/stow v0.0.0-20190209005554-0bff39424d5b
 github.com/graymeta/stow
 github.com/graymeta/stow/s3
 # github.com/hashicorp/go-version v1.1.0
 github.com/hashicorp/go-version
+# github.com/hpcloud/tail v1.0.0
+github.com/hpcloud/tail
+github.com/hpcloud/tail/ratelimiter
+github.com/hpcloud/tail/util
+github.com/hpcloud/tail/watch
+github.com/hpcloud/tail/winfile
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
 # github.com/leodido/go-urn v1.1.0
 github.com/leodido/go-urn
-# github.com/mattn/go-isatty v0.0.4
+# github.com/mattn/go-isatty v0.0.6
 github.com/mattn/go-isatty
-# github.com/mattn/go-runewidth v0.0.3
+# github.com/mattn/go-runewidth v0.0.4
 github.com/mattn/go-runewidth
-# github.com/olekukonko/tablewriter v0.0.0-20180130162743-b8a9be070da4
+# github.com/olekukonko/tablewriter v0.0.1
 github.com/olekukonko/tablewriter
-# github.com/onsi/gomega v1.4.2
-github.com/onsi/gomega/gbytes
+# github.com/onsi/ginkgo v1.7.0
+github.com/onsi/ginkgo
+github.com/onsi/ginkgo/config
+github.com/onsi/ginkgo/internal/codelocation
+github.com/onsi/ginkgo/internal/failer
+github.com/onsi/ginkgo/internal/remote
+github.com/onsi/ginkgo/internal/suite
+github.com/onsi/ginkgo/internal/testingtproxy
+github.com/onsi/ginkgo/internal/writer
+github.com/onsi/ginkgo/reporters
+github.com/onsi/ginkgo/reporters/stenographer
+github.com/onsi/ginkgo/reporters/stenographer/support/go-colorable
+github.com/onsi/ginkgo/types
+github.com/onsi/ginkgo/internal/spec_iterator
+github.com/onsi/ginkgo/internal/containernode
+github.com/onsi/ginkgo/internal/leafnodes
+github.com/onsi/ginkgo/internal/spec
+github.com/onsi/ginkgo/internal/specrunner
+github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty
+# github.com/onsi/gomega v1.4.3
+github.com/onsi/gomega
+github.com/onsi/gomega/internal/assertion
+github.com/onsi/gomega/internal/asyncassertion
+github.com/onsi/gomega/internal/testingtsupport
+github.com/onsi/gomega/matchers
+github.com/onsi/gomega/types
+github.com/onsi/gomega/internal/oraclematcher
 github.com/onsi/gomega/format
-# github.com/pivotal-cf/go-pivnet v0.0.50
-github.com/pivotal-cf/go-pivnet
+github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
+github.com/onsi/gomega/gbytes
+github.com/onsi/gomega/matchers/support/goraph/edge
+github.com/onsi/gomega/matchers/support/goraph/node
+github.com/onsi/gomega/matchers/support/goraph/util
+# github.com/pivotal-cf/go-pivnet v0.0.51
 github.com/pivotal-cf/go-pivnet/logger
+github.com/pivotal-cf/go-pivnet/logshim
+github.com/pivotal-cf/go-pivnet
 github.com/pivotal-cf/go-pivnet/download
-# github.com/pivotal-cf/jhanda v0.0.0-20180509215011-1b5ae1681a45
+# github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df
 github.com/pivotal-cf/jhanda
 github.com/pivotal-cf/jhanda/internal/parser
-# github.com/pivotal-cf/kiln v0.0.0-20180329191310-9c0f5ac8553d
+# github.com/pivotal-cf/kiln v0.0.0-20190228005520-19a75e607281
 github.com/pivotal-cf/kiln/proofing
-# github.com/pivotal-cf/om v0.0.0-20190304232807-76c93d1e75cc
+# github.com/pivotal-cf/om v0.0.0-20190305210459-f6abe8a489aa
 github.com/pivotal-cf/om/api
 github.com/pivotal-cf/om/commands
 github.com/pivotal-cf/om/formcontent
@@ -112,12 +149,13 @@ github.com/pivotal-cf/om/validator
 # github.com/pivotal-cf/pivnet-cli v0.0.55
 github.com/pivotal-cf/pivnet-cli/filter
 github.com/pivotal-cf/pivnet-cli/gp
-# github.com/pkg/errors v0.8.0
+# github.com/pkg/errors v0.8.1
 github.com/pkg/errors
-# github.com/shirou/gopsutil v0.0.0-20180927124308-a11c78ba2c13
+# github.com/shirou/gopsutil v2.18.12+incompatible
 github.com/shirou/gopsutil/disk
 github.com/shirou/gopsutil/internal/common
-# golang.org/x/net v0.0.0-20190206173232-65e2d4e15006
+# golang.org/x/net v0.0.0-20190301231341-16b79f2e4e95
+golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/html/atom
@@ -126,11 +164,29 @@ golang.org/x/net/context
 golang.org/x/oauth2
 golang.org/x/oauth2/clientcredentials
 golang.org/x/oauth2/internal
-# golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4
+# golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20190204203706-41f3e6584952
+# golang.org/x/sys v0.0.0-20190306220723-b294cbcfc56d
 golang.org/x/sys/unix
 golang.org/x/sys/windows
+# golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/encoding/htmlindex
+golang.org/x/text/transform
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/japanese
+golang.org/x/text/encoding/korean
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/encoding/traditionalchinese
+golang.org/x/text/encoding/unicode
+golang.org/x/text/language
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/runes
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
 # google.golang.org/appengine v1.4.0
 google.golang.org/appengine/urlfetch
 google.golang.org/appengine/internal
@@ -139,9 +195,13 @@ google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/datastore
 google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
-# gopkg.in/cheggaaa/pb.v1 v1.0.26
+# gopkg.in/cheggaaa/pb.v1 v1.0.28
 gopkg.in/cheggaaa/pb.v1
+# gopkg.in/fsnotify.v1 v1.4.7
+gopkg.in/fsnotify.v1
 # gopkg.in/go-playground/validator.v9 v9.27.0
 gopkg.in/go-playground/validator.v9
-# gopkg.in/yaml.v2 v2.2.1
+# gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
+gopkg.in/tomb.v1
+# gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2

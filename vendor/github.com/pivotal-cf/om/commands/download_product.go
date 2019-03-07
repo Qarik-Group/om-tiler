@@ -22,15 +22,6 @@ import (
 	"github.com/pivotal-cf/pivnet-cli/gp"
 )
 
-const DownloadProductOutputFilename = "download-file.json"
-
-type outputList struct {
-	ProductPath     string `json:"product_path,omitempty"`
-	ProductSlug     string `json:"product_slug,omitempty"`
-	StemcellPath    string `json:"stemcell_path,omitempty"`
-	StemcellVersion string `json:"stemcell_version,omitempty"`
-}
-
 type ProductDownloader interface {
 	GetAllProductVersions(slug string) ([]string, error)
 	GetLatestProductFile(slug, version, glob string) (*download_clients.FileArtifact, error)
@@ -141,7 +132,7 @@ func (c *DownloadProduct) Execute(args []string) error {
 	}
 
 	if c.Options.StemcellIaas == "" {
-		return c.writeOutputFile(productFileName, "", "")
+		return c.writeDownloadProductOutput(productFileName, "", "")
 	}
 
 	c.logger.Info("Downloading stemcell")
@@ -167,7 +158,12 @@ func (c *DownloadProduct) Execute(args []string) error {
 		return fmt.Errorf("could not download stemcell: %s", err)
 	}
 
-	return c.writeOutputFile(productFileName, stemcellFileName, stemcell.Version)
+	err = c.writeDownloadProductOutput(productFileName, stemcellFileName, stemcell.Version)
+	if err != nil {
+		return err
+	}
+
+	return c.writeAssignStemcellInput(stemcell.Version)
 }
 
 func (c DownloadProduct) createS3Config() download_clients.S3Configuration {
@@ -254,22 +250,58 @@ func (c *DownloadProduct) validate() error {
 	return nil
 }
 
-func (c DownloadProduct) writeOutputFile(productFileName string, stemcellFileName string, stemcellVersion string) error {
-	c.logger.Info(fmt.Sprintf("Writing a list of downloaded artifact to %s", DownloadProductOutputFilename))
-	outputList := outputList{
+func (c DownloadProduct) writeDownloadProductOutput(productFileName string, stemcellFileName string, stemcellVersion string) error {
+	downloadProductFilename := "download-file.json"
+	c.logger.Info(fmt.Sprintf("Writing a list of downloaded artifact to %s", downloadProductFilename))
+	downloadProductPayload := struct {
+		ProductPath     string `json:"product_path,omitempty"`
+		ProductSlug     string `json:"product_slug,omitempty"`
+		StemcellPath    string `json:"stemcell_path,omitempty"`
+		StemcellVersion string `json:"stemcell_version,omitempty"`
+	}{
 		ProductPath:     productFileName,
 		StemcellPath:    stemcellFileName,
 		ProductSlug:     c.Options.PivnetProductSlug,
 		StemcellVersion: stemcellVersion,
 	}
 
-	outputFile, err := os.Create(path.Join(c.Options.OutputDir, DownloadProductOutputFilename))
+	outputFile, err := os.Create(path.Join(c.Options.OutputDir, downloadProductFilename))
 	if err != nil {
-		return fmt.Errorf("could not create %s: %s", DownloadProductOutputFilename, err)
+		return fmt.Errorf("could not create %s: %s", downloadProductFilename, err)
 	}
 	defer outputFile.Close()
 
-	return json.NewEncoder(outputFile).Encode(outputList)
+	err = json.NewEncoder(outputFile).Encode(downloadProductPayload)
+	if err != nil {
+		return fmt.Errorf("could not encode JSON for %s: %s", downloadProductFilename, err)
+	}
+
+	return nil
+}
+
+func (c DownloadProduct) writeAssignStemcellInput(stemcellVersion string) error {
+	assignStemcellFileName := "assign-stemcell.yml"
+	c.logger.Info(fmt.Sprintf("Writing a assign stemcll artifact to %s", assignStemcellFileName))
+	assignStemcellPayload := struct {
+		Product  string `json:"product"`
+		Stemcell string `json:"stemcell"`
+	}{
+		Product:  c.Options.PivnetProductSlug,
+		Stemcell: stemcellVersion,
+	}
+
+	outputFile, err := os.Create(path.Join(c.Options.OutputDir, assignStemcellFileName))
+	if err != nil {
+		return fmt.Errorf("could not create %s: %s", assignStemcellFileName, err)
+	}
+	defer outputFile.Close()
+
+	err = json.NewEncoder(outputFile).Encode(assignStemcellPayload)
+	if err != nil {
+		return fmt.Errorf("could not encode JSON for %s: %s", assignStemcellFileName, err)
+	}
+
+	return nil
 }
 
 func (c *DownloadProduct) downloadProductFile(slug, version, glob, prefixPath string) (string, *download_clients.FileArtifact, error) {
