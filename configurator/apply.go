@@ -72,11 +72,16 @@ func (c *Configurator) downloadAndUploadProduct(p Product) error {
 	}
 	defer os.RemoveAll(dir)
 
+	glob := p.Glob
+	if glob == "" {
+		glob = "*.pivotal"
+	}
+
 	err = c.client.DownloadProduct(DownloadProductArgs{
 		OutputDirectory:      dir,
 		PivnetProductSlug:    p.Slug,
 		PivnetProductVersion: p.Version,
-		PivnetProductGlob:    p.Glob,
+		PivnetProductGlob:    glob,
 		StemcellIaas:         p.StemcellIaas,
 	})
 	if err != nil {

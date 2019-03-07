@@ -3,7 +3,6 @@ tiles:
     name: p-healthwatch
     slug: p-healthwatch
     version: 1.2.3
-    glob: "*.pivotal"
     stemcell_iaas: vsphere
   network: 2-az-configuration
   features:
