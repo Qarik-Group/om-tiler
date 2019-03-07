@@ -91,11 +91,11 @@ var _ = Describe("Apply", func() {
 		It("Stages the products", func() {
 			args := fakeOpsman.StageProductArgsForCall(0)
 			Expect(args.ProductName).To(Equal("p-healthwatch"))
-			Expect(args.ProductVersion).To(Equal("1.2.3"))
+			Expect(args.ProductVersion).To(Equal("1.2.3-build.1"))
 
 			args = fakeOpsman.StageProductArgsForCall(1)
 			Expect(args.ProductName).To(Equal("cf"))
-			Expect(args.ProductVersion).To(Equal("3.2.1"))
+			Expect(args.ProductVersion).To(Equal("3.2.1-build.3"))
 		})
 
 		It("Configures the products", func() {

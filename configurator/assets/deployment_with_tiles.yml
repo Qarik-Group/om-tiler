@@ -1,9 +1,11 @@
 tiles:
-- product:
-    name: p-healthwatch
+- pivnet:
     slug: p-healthwatch
     version: 1.2.3
     stemcell_iaas: vsphere
+  opsman:
+    name: p-healthwatch
+    version: 1.2.3-build.1
   network: 2-az-configuration
   features:
   - opsman-disable
@@ -22,9 +24,11 @@ tiles:
     singleton_availability_zone: network1
     redis_elb_names: elb1
     healthwatch-forwarder_instances: 5
-- product:
-    name: cf
+- pivnet:
     slug: elastic-runtime
     version: 3.2.1
     glob: "srt*.pivotal"
     stemcell_iaas: gcp
+  opsman:
+    name: cf
+    version: 3.2.1-build.3

@@ -38,14 +38,14 @@ func (c *Configurator) Apply(deploymentFilePath string) error {
 	}
 
 	for _, tile := range deployment.Tiles {
-		err = c.downloadAndUploadProduct(tile.Product)
+		err = c.downloadAndUploadProduct(tile.PivnetMeta)
 		if err != nil {
 			return err
 		}
 
 		err = c.client.StageProduct(StageProductArgs{
-			ProductName:    tile.Product.Name,
-			ProductVersion: tile.Product.Version,
+			ProductName:    tile.OpsmanMeta.Name,
+			ProductVersion: tile.OpsmanMeta.Version,
 		})
 		if err != nil {
 			return err
@@ -65,7 +65,7 @@ func (c *Configurator) Apply(deploymentFilePath string) error {
 	return nil
 }
 
-func (c *Configurator) downloadAndUploadProduct(p Product) error {
+func (c *Configurator) downloadAndUploadProduct(p PivnetMeta) error {
 	dir, err := ioutil.TempDir("", p.Slug)
 	if err != nil {
 		return err
@@ -107,7 +107,7 @@ func (c *Configurator) downloadAndUploadProduct(p Product) error {
 
 func (c *Configurator) configureProduct(t Tile) error {
 	ts := templateStore{
-		base:  filepath.Join("tiles", t.Product.Slug),
+		base:  filepath.Join("tiles", t.PivnetMeta.Slug),
 		store: c.templateStore,
 	}
 

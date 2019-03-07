@@ -28,20 +28,25 @@ func (d *Deployment) Validate() error {
 }
 
 type Tile struct {
-	Product  Product                `yaml:"product" validate:"required,dive"`
-	Features []string               `yaml:"features"`
-	Optional []string               `yaml:"optional"`
-	Resource []string               `yaml:"resource"`
-	Network  string                 `yaml:"network"`
-	Vars     map[string]interface{} `yaml:"vars"`
+	PivnetMeta PivnetMeta             `yaml:"pivnet" validate:"required,dive"`
+	OpsmanMeta OpsmanMeta             `yaml:"opsman" validate:"required,dive"`
+	Features   []string               `yaml:"features"`
+	Optional   []string               `yaml:"optional"`
+	Resource   []string               `yaml:"resource"`
+	Network    string                 `yaml:"network"`
+	Vars       map[string]interface{} `yaml:"vars"`
 }
 
-type Product struct {
-	Name         string `yaml:"name" validate:"required"`
+type PivnetMeta struct {
 	Slug         string `yaml:"slug" validate:"required"`
 	Version      string `yaml:"version" validate:"required"`
 	Glob         string `yaml:"glob"`
 	StemcellIaas string `yaml:"stemcell_iaas" validate:"required"`
+}
+
+type OpsmanMeta struct {
+	Name    string `yaml:"name" validate:"required"`
+	Version string `yaml:"version" validate:"required"`
 }
 
 func validate(name string, s interface{}) error {
