@@ -85,8 +85,6 @@ github.com/mattn/go-runewidth v0.0.3 h1:a+kO+98RDGEfo6asOGMmpodZq4FNtnGP54yps8Bz
 github.com/mattn/go-runewidth v0.0.3/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
 github.com/mattn/go-runewidth v0.0.4 h1:2BvfKmzob6Bmd4YsL0zygOqfdFnK7GR4QL06Do4/p7Y=
 github.com/mattn/go-runewidth v0.0.4/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
-github.com/nats-io/gnatsd v1.4.1 h1:RconcfDeWpKCD6QIIwiVFcvForlXpWeJP7i5/lDLy44=
-github.com/nats-io/gnatsd v1.4.1/go.mod h1:nqco77VO78hLCJpIcVfygDP2rPGfsEHkGTUk94uh5DQ=
 github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d h1:VhgPp6v9qf9Agr/56bj7Y/xa04UccTW04VP0Qed4vnQ=
 github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d/go.mod h1:YUTz3bUH2ZwIWBy3CJBeOBEugqcmXREj14T+iG/4k4U=
 github.com/olekukonko/tablewriter v0.0.0-20180130162743-b8a9be070da4/go.mod h1:vsDQFd/mU46D+Z4whnwzcISnGGzXWMclvtLoiIKAKIo=
@@ -102,8 +100,6 @@ github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1Cpa
 github.com/pivotal-cf/go-pivnet v0.0.50/go.mod h1:rvEzWli4NJQhX7Z3z0DiEQXsPwC+uE//eIKcpl7S1as=
 github.com/pivotal-cf/go-pivnet v0.0.51 h1:KU3xmPj6uQ1dpl8+gQJeh8E7UmnyhvURdExNuyQgvGs=
 github.com/pivotal-cf/go-pivnet v0.0.51/go.mod h1:rvEzWli4NJQhX7Z3z0DiEQXsPwC+uE//eIKcpl7S1as=
-github.com/pivotal-cf/go-pivnet v0.0.52 h1:3oX8/Lt8Zsk6SB0jqOojzsyteK4qV+5bomwRmjcnBWE=
-github.com/pivotal-cf/go-pivnet v0.0.52/go.mod h1:rvEzWli4NJQhX7Z3z0DiEQXsPwC+uE//eIKcpl7S1as=
 github.com/pivotal-cf/jhanda v0.0.0-20180509215011-1b5ae1681a45/go.mod h1:GNr2RBRX0Gs2FaJRi4KUrfQV32EhnjQ3Fj+nw87cx08=
 github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df h1:0qMnOwc8HWxJYvsA6jE616dmQcuoJOCOAndIGjsMj3o=
 github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df/go.mod h1:GNr2RBRX0Gs2FaJRi4KUrfQV32EhnjQ3Fj+nw87cx08=
@@ -112,8 +108,6 @@ github.com/pivotal-cf/kiln v0.0.0-20190228005520-19a75e607281 h1:v59rS+Wpz1tTHxN
 github.com/pivotal-cf/kiln v0.0.0-20190228005520-19a75e607281/go.mod h1:dtX102okHXUUdK9XmlK5WYl2lR0VP0OLaYCiIowB17M=
 github.com/pivotal-cf/om v0.0.0-20190305210459-f6abe8a489aa h1:48ED+o5ZxvQex+yAjF/bls2gB+eV9vi31WKessItoxQ=
 github.com/pivotal-cf/om v0.0.0-20190305210459-f6abe8a489aa/go.mod h1:2OP5Qo/j6mPsDKwL67HT5uWgl3Zl+GHGGsJo1u1Ovzs=
-github.com/pivotal-cf/pivnet-cli v0.0.52 h1:k4Pk78arpovGEvmVRVMzAeQdc7tqxzjgKJzDgaksHjo=
-github.com/pivotal-cf/pivnet-cli v0.0.52/go.mod h1:GIenTUfi8rXtvDXnOuUMfQ+ZofegQ+7XG2Hby3jB0+4=
 github.com/pivotal-cf/pivnet-cli v0.0.55 h1:R8mnLHUVb9DWuVqHdmkLCltG7bUTJq9nj5OexPt5Y2s=
 github.com/pivotal-cf/pivnet-cli v0.0.55/go.mod h1:GIenTUfi8rXtvDXnOuUMfQ+ZofegQ+7XG2Hby3jB0+4=
 github.com/pivotal/uilive v0.0.0-20181204013807-921d4ab784bd/go.mod h1:j8LyeJ7/0GbbwookzCmmFyCoRKp1WBwV/xxlebLz9UM=

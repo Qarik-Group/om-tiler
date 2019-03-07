@@ -122,8 +122,8 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 # github.com/pivotal-cf/go-pivnet v0.0.51
-github.com/pivotal-cf/go-pivnet/logger
 github.com/pivotal-cf/go-pivnet/logshim
+github.com/pivotal-cf/go-pivnet/logger
 github.com/pivotal-cf/go-pivnet
 github.com/pivotal-cf/go-pivnet/download
 # github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df
@@ -134,13 +134,13 @@ github.com/pivotal-cf/kiln/proofing
 # github.com/pivotal-cf/om v0.0.0-20190305210459-f6abe8a489aa
 github.com/pivotal-cf/om/api
 github.com/pivotal-cf/om/commands
+github.com/pivotal-cf/om/extractor
 github.com/pivotal-cf/om/formcontent
 github.com/pivotal-cf/om/network
 github.com/pivotal-cf/om/progress
 github.com/pivotal-cf/om/config
 github.com/pivotal-cf/om/configparser
 github.com/pivotal-cf/om/download_clients
-github.com/pivotal-cf/om/extractor
 github.com/pivotal-cf/om/models
 github.com/pivotal-cf/om/presenters
 github.com/pivotal-cf/om/renderers
