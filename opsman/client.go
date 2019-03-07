@@ -18,10 +18,19 @@ import (
 	"github.com/starkandwayne/om-configurator/configurator"
 )
 
+type Config struct {
+	Target               string
+	Username             string
+	Password             string
+	DecryptionPassphrase string
+	SkipSSLVerification  bool
+	PivnetToken          string
+}
+
 type Client struct {
 	api    api.Api
 	log    *log.Logger
-	config configurator.Opsman
+	config Config
 }
 
 const (
@@ -30,7 +39,7 @@ const (
 	pollingIntervalSec = time.Duration(10) * time.Second
 )
 
-func NewClient(c configurator.Opsman, logger *log.Logger) (*Client, error) {
+func NewClient(c Config, logger *log.Logger) (*Client, error) {
 	oauthClient, err := network.NewOAuthClient(
 		c.Target, c.Username, c.Password, "", "",
 		c.SkipSSLVerification, true,

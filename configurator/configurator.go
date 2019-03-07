@@ -8,33 +8,24 @@ import (
 
 type Configurator struct {
 	client        OpsmanClient
-	deployment    *Deployment
+	config        *Config
 	logger        *log.Logger
 	templateStore http.FileSystem
 }
 
-func NewConfigurator(d *Deployment,
-	templateStore http.FileSystem,
-	newOpsman func(Opsman, *log.Logger) (OpsmanClient, error),
-	logger *log.Logger) (*Configurator, error) {
+func NewConfigurator(c *Config, ts http.FileSystem,
+	client OpsmanClient, l *log.Logger) (*Configurator, error) {
 
-	err := d.Validate()
+	err := c.Validate()
 	if err != nil {
 		return &Configurator{}, err
 	}
 
-	client, err := newOpsman(d.Opsman, logger)
-	if err != nil {
-		return &Configurator{}, err
-	}
-
-	logger.SetPrefix(fmt.Sprintf("%s[OM Configurator] ", logger.Prefix()))
+	l.SetPrefix(fmt.Sprintf("%s[OM Configurator] ", l.Prefix()))
 
 	configurator := Configurator{
-		client:        client,
-		deployment:    d,
-		logger:        logger,
-		templateStore: templateStore,
+		client: client, config: c,
+		logger: l, templateStore: ts,
 	}
 	return &configurator, nil
 }

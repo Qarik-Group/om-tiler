@@ -13,7 +13,10 @@ type templateStore struct {
 }
 
 func (ts *templateStore) lookup(dir string, file string) (io.Reader, error) {
-	return ts.store.Open(filepath.Join(ts.base, dir, fmt.Sprintf("%s.yml", file)))
+	if filepath.Ext(file) == "" {
+		file = fmt.Sprintf("%s.yml", file)
+	}
+	return ts.store.Open(filepath.Join(ts.base, dir, file))
 }
 
 func (ts *templateStore) batchLookup(dir string, files []string, out *[]io.Reader, ignoreMissing bool) error {

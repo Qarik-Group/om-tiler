@@ -9,8 +9,6 @@ import (
 	"path/filepath"
 	"runtime"
 
-	yaml "gopkg.in/yaml.v2"
-
 	. "github.com/starkandwayne/om-configurator/configurator"
 	"github.com/starkandwayne/om-configurator/configurator/configuratorfakes"
 
@@ -21,19 +19,11 @@ import (
 var _ = Describe("Apply", func() {
 	var (
 		fakeOpsman *configuratorfakes.FakeOpsmanClient
-		deployment Deployment
 	)
 
 	assetsDir := func() string {
 		_, filename, _, _ := runtime.Caller(0)
 		return filepath.Join(filepath.Dir(filename), "assets")
-	}
-
-	loadYAMLAsset := func(file string, out interface{}) {
-		data, err := ioutil.ReadFile(filepath.Join(assetsDir(), file))
-		Expect(err).ToNot(HaveOccurred())
-		err = yaml.Unmarshal(data, out)
-		Expect(err).ToNot(HaveOccurred())
 	}
 
 	readAsset := func(file string) []byte {
@@ -64,16 +54,19 @@ var _ = Describe("Apply", func() {
 					return nil
 				},
 			}
-			newOpsman := func(_ Opsman, _ *log.Logger) (OpsmanClient, error) {
-				return fakeOpsman, nil
-			}
-			loadYAMLAsset("deployment_with_tiles.yml", &deployment)
 
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
-			configurator, err := NewConfigurator(&deployment, templateStore, newOpsman, logger)
+			config := Config{
+				Target:               "example.com",
+				Username:             "username",
+				Password:             "password",
+				DecryptionPassphrase: "decrypt",
+				PivnetToken:          "token",
+			}
+			configurator, err := NewConfigurator(&config, templateStore, fakeOpsman, logger)
 			Expect(err).ToNot(HaveOccurred())
-			err = configurator.Apply()
+			err = configurator.Apply("deployment_with_tiles.yml")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

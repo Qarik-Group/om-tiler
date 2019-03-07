@@ -11,13 +11,33 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func (c *Configurator) Apply() error {
-	err := c.client.ConfigureAuthentication()
+func (c *Configurator) Apply(deploymentFilePath string) error {
+	ts := templateStore{base: "", store: c.templateStore}
+	var deployment Deployment
+	df, err := ts.lookup("", deploymentFilePath)
 	if err != nil {
 		return err
 	}
 
-	for _, tile := range c.deployment.Tiles {
+	db, err := ioutil.ReadAll(df)
+	if err != nil {
+		return err
+	}
+
+	if err = yaml.Unmarshal(db, &deployment); err != nil {
+		return err
+	}
+
+	if err = deployment.Validate(); err != nil {
+		return err
+	}
+
+	err = c.client.ConfigureAuthentication()
+	if err != nil {
+		return err
+	}
+
+	for _, tile := range deployment.Tiles {
 		err = c.downloadAndUploadProduct(tile.Product)
 		if err != nil {
 			return err
@@ -73,7 +93,10 @@ func (c *Configurator) downloadAndUploadProduct(p Product) error {
 }
 
 func (c *Configurator) configureProduct(t Tile) error {
-	ts := templateStore{base: t.Product.Slug, store: c.templateStore}
+	ts := templateStore{
+		base:  filepath.Join("tiles", t.Product.Slug),
+		store: c.templateStore,
+	}
 
 	templateFile, err := ts.lookup("", "product")
 	if err != nil {

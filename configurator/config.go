@@ -6,18 +6,25 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
-type Deployment struct {
-	Opsman Opsman `yaml:"opsman" validate:"required,dive"`
-	Tiles  []Tile `yaml:"tiles" validate:"required,dive"`
-}
-
-type Opsman struct {
+type Config struct {
 	Target               string `yaml:"target" validate:"required"`
 	Username             string `yaml:"username" validate:"required"`
 	Password             string `yaml:"password" validate:"required"`
 	DecryptionPassphrase string `yaml:"decryption_passphrase" validate:"required"`
 	SkipSSLVerification  bool   `yaml:"skip_ssl_verification"`
 	PivnetToken          string `yaml:"pivnet_token" validate:"required"`
+}
+
+func (c *Config) Validate() error {
+	return validate("Config", c)
+}
+
+type Deployment struct {
+	Tiles []Tile `yaml:"tiles" validate:"required,dive"`
+}
+
+func (d *Deployment) Validate() error {
+	return validate("Deployment", d)
 }
 
 type Tile struct {
@@ -37,10 +44,10 @@ type Product struct {
 	StemcellIaas string `yaml:"stemcell_iaas" validate:"required"`
 }
 
-func (d *Deployment) Validate() error {
-	err := validator.New().Struct(d)
+func validate(name string, s interface{}) error {
+	err := validator.New().Struct(s)
 	if err != nil {
-		return fmt.Errorf("Deployment has error(s):\n%+v\n", err)
+		return fmt.Errorf("%s has error(s):\n%+v\n", name, err)
 	}
 	return nil
 }
