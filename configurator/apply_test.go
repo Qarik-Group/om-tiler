@@ -57,14 +57,7 @@ var _ = Describe("Apply", func() {
 
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
-			config := Config{
-				Target:               "example.com",
-				Username:             "username",
-				Password:             "password",
-				DecryptionPassphrase: "decrypt",
-				PivnetToken:          "token",
-			}
-			configurator, err := NewConfigurator(&config, templateStore, fakeOpsman, logger)
+			configurator, err := NewConfigurator(templateStore, fakeOpsman, logger)
 			Expect(err).ToNot(HaveOccurred())
 			err = configurator.Apply("deployment_with_tiles.yml")
 			Expect(err).ToNot(HaveOccurred())
