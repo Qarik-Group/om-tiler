@@ -1,6 +1,6 @@
 tiles:
 - product:
-    name: Health Watch
+    name: p-healthwatch
     slug: p-healthwatch
     version: 1.2.3
     glob: "*.pivotal"
@@ -24,7 +24,7 @@ tiles:
     redis_elb_names: elb1
     healthwatch-forwarder_instances: 5
 - product:
-    name: Small Footprint PAS
+    name: cf
     slug: elastic-runtime
     version: 3.2.1
     glob: "srt*.pivotal"

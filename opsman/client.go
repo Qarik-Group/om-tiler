@@ -124,6 +124,15 @@ func (c *Client) UploadStemcell(stemcell string) error {
 	return cmd.Execute(args)
 }
 
+func (c *Client) StageProduct(a configurator.StageProductArgs) error {
+	args := []string{
+		fmt.Sprintf("--product-name=%s", a.ProductName),
+		fmt.Sprintf("--product-version=%s", a.ProductVersion),
+	}
+	cmd := commands.NewStageProduct(c.api, c.log)
+	return cmd.Execute(args)
+}
+
 func (c *Client) ConfigureProduct(config []byte) error {
 	configFile, err := ioutil.TempFile("", "config")
 	if err != nil {

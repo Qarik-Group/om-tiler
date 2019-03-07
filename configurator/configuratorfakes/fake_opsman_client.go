@@ -50,6 +50,17 @@ type FakeOpsmanClient struct {
 	downloadProductReturnsOnCall map[int]struct {
 		result1 error
 	}
+	StageProductStub        func(configurator.StageProductArgs) error
+	stageProductMutex       sync.RWMutex
+	stageProductArgsForCall []struct {
+		arg1 configurator.StageProductArgs
+	}
+	stageProductReturns struct {
+		result1 error
+	}
+	stageProductReturnsOnCall map[int]struct {
+		result1 error
+	}
 	UploadProductStub        func(string) error
 	uploadProductMutex       sync.RWMutex
 	uploadProductArgsForCall []struct {
@@ -305,6 +316,66 @@ func (fake *FakeOpsmanClient) DownloadProductReturnsOnCall(i int, result1 error)
 	}{result1}
 }
 
+func (fake *FakeOpsmanClient) StageProduct(arg1 configurator.StageProductArgs) error {
+	fake.stageProductMutex.Lock()
+	ret, specificReturn := fake.stageProductReturnsOnCall[len(fake.stageProductArgsForCall)]
+	fake.stageProductArgsForCall = append(fake.stageProductArgsForCall, struct {
+		arg1 configurator.StageProductArgs
+	}{arg1})
+	fake.recordInvocation("StageProduct", []interface{}{arg1})
+	fake.stageProductMutex.Unlock()
+	if fake.StageProductStub != nil {
+		return fake.StageProductStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.stageProductReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeOpsmanClient) StageProductCallCount() int {
+	fake.stageProductMutex.RLock()
+	defer fake.stageProductMutex.RUnlock()
+	return len(fake.stageProductArgsForCall)
+}
+
+func (fake *FakeOpsmanClient) StageProductCalls(stub func(configurator.StageProductArgs) error) {
+	fake.stageProductMutex.Lock()
+	defer fake.stageProductMutex.Unlock()
+	fake.StageProductStub = stub
+}
+
+func (fake *FakeOpsmanClient) StageProductArgsForCall(i int) configurator.StageProductArgs {
+	fake.stageProductMutex.RLock()
+	defer fake.stageProductMutex.RUnlock()
+	argsForCall := fake.stageProductArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeOpsmanClient) StageProductReturns(result1 error) {
+	fake.stageProductMutex.Lock()
+	defer fake.stageProductMutex.Unlock()
+	fake.StageProductStub = nil
+	fake.stageProductReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeOpsmanClient) StageProductReturnsOnCall(i int, result1 error) {
+	fake.stageProductMutex.Lock()
+	defer fake.stageProductMutex.Unlock()
+	fake.StageProductStub = nil
+	if fake.stageProductReturnsOnCall == nil {
+		fake.stageProductReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.stageProductReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeOpsmanClient) UploadProduct(arg1 string) error {
 	fake.uploadProductMutex.Lock()
 	ret, specificReturn := fake.uploadProductReturnsOnCall[len(fake.uploadProductArgsForCall)]
@@ -436,6 +507,8 @@ func (fake *FakeOpsmanClient) Invocations() map[string][][]interface{} {
 	defer fake.configureProductMutex.RUnlock()
 	fake.downloadProductMutex.RLock()
 	defer fake.downloadProductMutex.RUnlock()
+	fake.stageProductMutex.RLock()
+	defer fake.stageProductMutex.RUnlock()
 	fake.uploadProductMutex.RLock()
 	defer fake.uploadProductMutex.RUnlock()
 	fake.uploadStemcellMutex.RLock()

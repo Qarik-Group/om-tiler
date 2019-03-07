@@ -43,6 +43,14 @@ func (c *Configurator) Apply(deploymentFilePath string) error {
 			return err
 		}
 
+		err = c.client.StageProduct(StageProductArgs{
+			ProductName:    tile.Product.Name,
+			ProductVersion: tile.Product.Version,
+		})
+		if err != nil {
+			return err
+		}
+
 		err = c.configureProduct(tile)
 		if err != nil {
 			return err

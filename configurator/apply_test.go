@@ -88,6 +88,16 @@ var _ = Describe("Apply", func() {
 				To(HaveSuffix("stemcell-gcp.tgz"))
 		})
 
+		It("Stages the products", func() {
+			args := fakeOpsman.StageProductArgsForCall(0)
+			Expect(args.ProductName).To(Equal("p-healthwatch"))
+			Expect(args.ProductVersion).To(Equal("1.2.3"))
+
+			args = fakeOpsman.StageProductArgsForCall(1)
+			Expect(args.ProductName).To(Equal("cf"))
+			Expect(args.ProductVersion).To(Equal("3.2.1"))
+		})
+
 		It("Configures the products", func() {
 			config := fakeOpsman.ConfigureProductArgsForCall(0)
 			Expect(config).To(MatchYAML(readAsset("p-healthwatch-merged.yml")))
