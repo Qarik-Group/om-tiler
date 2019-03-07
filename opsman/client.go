@@ -36,7 +36,7 @@ type Client struct {
 const (
 	connectTimeout     = time.Duration(5) * time.Second
 	requestTimeout     = time.Duration(1800) * time.Second
-	pollingIntervalSec = time.Duration(10) * time.Second
+	pollingIntervalSec = 10
 )
 
 func NewClient(c Config, logger *log.Logger) (*Client, error) {
