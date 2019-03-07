@@ -86,7 +86,7 @@ func (c *Client) ConfigureAuthentication() error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) DownloadProduct(a *configurator.DownloadProductArgs) error {
+func (c *Client) DownloadProduct(a configurator.DownloadProductArgs) error {
 	args := []string{
 		fmt.Sprintf("--output-directory=%s", a.OutputDirectory),
 		fmt.Sprintf("--pivnet-api-token=%s", c.config.PivnetToken),
