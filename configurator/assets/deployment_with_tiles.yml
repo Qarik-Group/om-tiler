@@ -1,11 +1,3 @@
-opsman:
-  target: example.com
-  username: username
-  password: password
-  decryption_passphrase: decrypt
-  skip_ssl_verification: true
-  pivnet_token: token
-
 tiles:
 - product:
     name: Health Watch

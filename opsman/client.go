@@ -91,8 +91,8 @@ func (c *Client) DownloadProduct(a configurator.DownloadProductArgs) error {
 		fmt.Sprintf("--output-directory=%s", a.OutputDirectory),
 		fmt.Sprintf("--pivnet-api-token=%s", c.config.PivnetToken),
 		fmt.Sprintf("--pivnet-product-slug=%s", a.PivnetProductSlug),
-		fmt.Sprintf("--pivnet-product-version=%s", a.PivnetProductVersion),
-		fmt.Sprintf("--pivnet-product-glob=%s", a.PivnetProductGlob),
+		fmt.Sprintf("--pivnet-file-glob=%s", a.PivnetProductGlob),
+		fmt.Sprintf("--product-version=%s", a.PivnetProductVersion),
 		fmt.Sprintf("--stemcell-iaas=%s", a.StemcellIaas),
 		"--download-stemcell",
 	}
