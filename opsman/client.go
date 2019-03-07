@@ -13,7 +13,6 @@ import (
 	"github.com/pivotal-cf/om/formcontent"
 	"github.com/pivotal-cf/om/network"
 	"github.com/pivotal-cf/om/progress"
-	"github.com/starkandwayne/om-configurator/config"
 	"github.com/starkandwayne/om-configurator/configurator"
 )
 
