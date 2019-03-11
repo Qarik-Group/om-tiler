@@ -1,0 +1,55 @@
+az-configuration: []
+director-configuration:
+  allow_legacy_agents: true
+  blobstore_type: local
+  bosh_recreate_on_next_deploy: false
+  bosh_recreate_persistent_disks_on_next_deploy: false
+  database_type: internal
+  director_worker_count: 5
+  encryption:
+    keys: []
+    providers: []
+  hm_emailer_options:
+    enabled: false
+  hm_pager_duty_options:
+    enabled: false
+  identification_tags: {}
+  keep_unreachable_vms: false
+  local_blobstore_options:
+    tls_enabled: true
+  ntp_servers_string: ""
+  post_deploy_enabled: false
+  resurrector_enabled: false
+  retry_bosh_deploys: false
+  skip_director_drain: true
+iaas-configuration:
+  additional_cloud_properties: {}
+  associated_service_account: ((iaas-configuration_associated_service_account))
+  default_deployment_tag: ((iaas-configuration_default_deployment_tag))
+  guid: ((iaas-configuration_guid))
+  name: ((iaas-configuration_name))
+  project: ((iaas-configuration_project))
+network-assignment:
+  other_availability_zones: []
+networks-configuration:
+  icmp_checks_enabled: false
+  networks: []
+resource-configuration:
+  compilation:
+    instances: automatic
+    instance_type:
+      id: automatic
+    internet_connected: true
+  director:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+    internet_connected: true
+security-configuration:
+  generate_vm_passwords: true
+  opsmanager_root_ca_trusted_certs: false
+syslog-configuration:
+  enabled: false
+vmextensions-configuration: []

@@ -20,21 +20,27 @@ func (c *Config) Validate() error {
 }
 
 type Deployment struct {
-	Tiles []Tile `yaml:"tiles" validate:"required,dive"`
+	Director Director `yaml"director validate:"required,dive"`
+	Tiles    []Tile   `yaml:"tiles" validate:"required,dive"`
 }
 
 func (d *Deployment) Validate() error {
 	return validate("Deployment", d)
 }
 
+type Template struct {
+	Manifest  string                 `yaml:"manifest"`
+	OpsFiles  []string               `yaml:"ops_files"`
+	VarsFiles []string               `yaml:"vars_files"`
+	Vars      map[string]interface{} `yaml:"vars"`
+}
+
+type Director Template
+
 type Tile struct {
-	PivnetMeta PivnetMeta             `yaml:"pivnet" validate:"required,dive"`
-	OpsmanMeta OpsmanMeta             `yaml:"opsman" validate:"required,dive"`
-	Features   []string               `yaml:"features"`
-	Optional   []string               `yaml:"optional"`
-	Resource   []string               `yaml:"resource"`
-	Network    string                 `yaml:"network"`
-	Vars       map[string]interface{} `yaml:"vars"`
+	PivnetMeta PivnetMeta `yaml:"pivnet" validate:"required,dive"`
+	OpsmanMeta OpsmanMeta `yaml:"opsman" validate:"required,dive"`
+	Template   `yaml:",inline"`
 }
 
 type PivnetMeta struct {

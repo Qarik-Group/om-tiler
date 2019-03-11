@@ -1,3 +1,12 @@
+director:
+  manifest: director/config.yml
+  ops_files: []
+  vars:
+    iaas-configuration_associated_service_account: foo-account
+    iaas-configuration_default_deployment_tag: example-tag
+    iaas-configuration_guid: 4f510b72-62b9-4112-8cf4-b318b663b176
+    iaas-configuration_name: foo
+    iaas-configuration_project: example-project
 tiles:
 - pivnet:
     slug: p-healthwatch
@@ -6,13 +15,16 @@ tiles:
   opsman:
     name: p-healthwatch
     version: 1.2.3-build.1
-  network: 2-az-configuration
-  features:
-  - opsman-disable
-  optional:
-  - add-healthwatch-forwarder-foundation_name
-  resource:
-  - redis_elb_names
+  manifest: tiles/p-healthwatch/product.yml
+  ops_files:
+  - tiles/p-healthwatch/network/2-az-configuration.yml
+  - tiles/p-healthwatch/features/opsman-disable.yml
+  - tiles/p-healthwatch/optional/add-healthwatch-forwarder-foundation_name.yml
+  - tiles/p-healthwatch/resource/redis_elb_names.yml
+  vars_files:
+  - tiles/p-healthwatch/product-default-vars.yml
+  - tiles/p-healthwatch/resource-vars.yml
+  - tiles/p-healthwatch/errand-vars.yml
   vars:
     az2_name: z2
     boshtasks/enable/bosh_taskcheck_password: password
@@ -32,3 +44,4 @@ tiles:
   opsman:
     name: cf
     version: 3.2.1-build.3
+  manifest: tiles/elastic-runtime/product.yml

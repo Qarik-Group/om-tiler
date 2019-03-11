@@ -63,6 +63,11 @@ var _ = Describe("Apply", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
+		It("Configures the director", func() {
+			config := fakeOpsman.ConfigureDirectorArgsForCall(0)
+			Expect(config).To(MatchYAML(readAsset("results/director-config.yml")))
+		})
+
 		It("Downloads the tiles and stemcells from Pivotal Network", func() {
 			args := fakeOpsman.DownloadProductArgsForCall(0)
 			Expect(args.PivnetProductSlug).To(Equal("p-healthwatch"))
@@ -100,7 +105,7 @@ var _ = Describe("Apply", func() {
 
 		It("Configures the products", func() {
 			config := fakeOpsman.ConfigureProductArgsForCall(0)
-			Expect(config).To(MatchYAML(readAsset("p-healthwatch-merged.yml")))
+			Expect(config).To(MatchYAML(readAsset("results/p-healthwatch.yml")))
 		})
 	})
 

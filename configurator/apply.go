@@ -1,9 +1,7 @@
 package configurator
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -12,9 +10,8 @@ import (
 )
 
 func (c *Configurator) Apply(deploymentFilePath string) error {
-	ts := templateStore{base: "", store: c.templateStore}
 	var deployment Deployment
-	df, err := ts.lookup("", deploymentFilePath)
+	df, err := c.templateStore.Open(deploymentFilePath)
 	if err != nil {
 		return err
 	}
@@ -33,6 +30,11 @@ func (c *Configurator) Apply(deploymentFilePath string) error {
 	}
 
 	err = c.client.ConfigureAuthentication()
+	if err != nil {
+		return err
+	}
+
+	err = c.configureDirector(deployment.Director)
 	if err != nil {
 		return err
 	}
@@ -106,55 +108,12 @@ func (c *Configurator) downloadAndUploadProduct(p PivnetMeta) error {
 }
 
 func (c *Configurator) configureProduct(t Tile) error {
-	ts := templateStore{
-		base:  filepath.Join("tiles", t.PivnetMeta.Slug),
-		store: c.templateStore,
-	}
-
-	templateFile, err := ts.lookup("", "product")
-	if err != nil {
-		return err
-	}
-
-	var opsFiles []io.Reader
-	if err = ts.batchLookup("features", t.Features, &opsFiles, false); err != nil {
-		return err
-	}
-
-	if err = ts.batchLookup("optional", t.Optional, &opsFiles, false); err != nil {
-		return err
-	}
-
-	if err = ts.batchLookup("resource", t.Resource, &opsFiles, false); err != nil {
-		return err
-	}
-
-	if t.Network != "" {
-		network, err := ts.lookup("network", t.Network)
-		if err != nil {
-			return err
-		}
-		opsFiles = append(opsFiles, network)
-	}
-
-	var varsFiles []io.Reader
-	if err != ts.batchLookup("", []string{
-		"errand-vars", "product-default-vars", "resource-vars",
-	}, &varsFiles, true) {
-		return err
-	}
-
-	vars, err := yaml.Marshal(t.Vars)
-	if err != nil {
-		return err
-	}
-
-	varsFiles = append(varsFiles, bytes.NewReader(vars))
-
 	ic := interpolateConfig{
-		TemplateFile: templateFile,
-		OpsFiles:     opsFiles,
-		VarsFiles:    varsFiles,
+		TemplateFile:  t.Manifest,
+		OpsFiles:      t.OpsFiles,
+		VarsFiles:     t.VarsFiles,
+		Vars:          t.Vars,
+		TemplateStore: c.templateStore,
 	}
 
 	tpl, err := ic.evaluate()
@@ -163,6 +122,23 @@ func (c *Configurator) configureProduct(t Tile) error {
 	}
 
 	return c.client.ConfigureProduct(tpl)
+}
+
+func (c *Configurator) configureDirector(d Director) error {
+	ic := interpolateConfig{
+		TemplateFile:  d.Manifest,
+		OpsFiles:      d.OpsFiles,
+		VarsFiles:     d.VarsFiles,
+		Vars:          d.Vars,
+		TemplateStore: c.templateStore,
+	}
+
+	tpl, err := ic.evaluate()
+	if err != nil {
+		return err
+	}
+
+	return c.client.ConfigureDirector(tpl)
 }
 
 func findFileInDir(dir, glob string) (string, error) {

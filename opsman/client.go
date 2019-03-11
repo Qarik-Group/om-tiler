@@ -134,28 +134,48 @@ func (c *Client) StageProduct(a configurator.StageProductArgs) error {
 }
 
 func (c *Client) ConfigureProduct(config []byte) error {
-	configFile, err := ioutil.TempFile("", "config")
+	configFile, err := tmpConfigFile(config)
 	if err != nil {
 		return err
 	}
-	defer os.Remove(configFile.Name())
-
-	if _, err = configFile.Write(config); err != nil {
-		return err
-	}
-
-	if err = configFile.Close(); err != nil {
-		return err
-	}
-
 	args := []string{
-		fmt.Sprintf("--config=%s", configFile.Name()),
+		fmt.Sprintf("--config=%s", configFile),
 	}
 	cmd := commands.NewConfigureProduct(
 		os.Environ, c.api, c.config.Target, c.log)
 	return cmd.Execute(args)
 }
 
+func (c *Client) ConfigureDirector(config []byte) error {
+	configFile, err := tmpConfigFile(config)
+	if err != nil {
+		return err
+	}
+	args := []string{
+		fmt.Sprintf("--config=%s", configFile),
+	}
+	cmd := commands.NewConfigureDirector(os.Environ, c.api, c.log)
+	return cmd.Execute(args)
+}
+
 func (c *Client) ApplyChanges() error {
 	return nil
+}
+
+func tmpConfigFile(config []byte) (string, error) {
+	configFile, err := ioutil.TempFile("", "config")
+	if err != nil {
+		return "", err
+	}
+	defer os.Remove(configFile.Name())
+
+	if _, err = configFile.Write(config); err != nil {
+		return "", err
+	}
+
+	if err = configFile.Close(); err != nil {
+		return "", err
+	}
+
+	return configFile.Name(), nil
 }

@@ -20,6 +20,7 @@ type OpsmanClient interface {
 	UploadProduct(string) error
 	UploadStemcell(string) error
 	StageProduct(StageProductArgs) error
+	ConfigureDirector([]byte) error
 	ConfigureProduct([]byte) error
 	ApplyChanges() error
 }

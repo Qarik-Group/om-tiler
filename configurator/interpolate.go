@@ -1,8 +1,10 @@
 package configurator
 
 import (
-	"io"
+	"fmt"
 	"io/ioutil"
+	"net/http"
+	"path/filepath"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -11,13 +13,15 @@ import (
 )
 
 type interpolateConfig struct {
-	TemplateFile io.Reader
-	VarsFiles    []io.Reader
-	OpsFiles     []io.Reader
+	TemplateFile  string
+	OpsFiles      []string
+	VarsFiles     []string
+	Vars          map[string]interface{}
+	TemplateStore http.FileSystem
 }
 
 func (c *interpolateConfig) evaluate() ([]byte, error) {
-	template, err := ioutil.ReadAll(c.TemplateFile)
+	template, err := c.readFile(c.TemplateFile)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -26,20 +30,9 @@ func (c *interpolateConfig) evaluate() ([]byte, error) {
 	staticVars := boshtpl.StaticVariables{}
 	ops := patch.Ops{}
 
-	for _, file := range c.VarsFiles {
-		var fileVars boshtpl.StaticVariables
-		err = readYAMLFile(file, &fileVars)
-		if err != nil {
-			return nil, err
-		}
-		for k, v := range fileVars {
-			staticVars[k] = v
-		}
-	}
-
 	for _, file := range c.OpsFiles {
 		var opDefs []patch.OpDefinition
-		err = readYAMLFile(file, &opDefs)
+		err = c.readYAMLFile(file, &opDefs)
 		if err != nil {
 			return nil, err
 		}
@@ -48,6 +41,21 @@ func (c *interpolateConfig) evaluate() ([]byte, error) {
 			return nil, err
 		}
 		ops = append(ops, op)
+	}
+
+	for _, file := range c.VarsFiles {
+		var fileVars boshtpl.StaticVariables
+		err = c.readYAMLFile(file, &fileVars)
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range fileVars {
+			staticVars[k] = v
+		}
+	}
+
+	for k, v := range c.Vars {
+		staticVars[k] = v
 	}
 
 	evalOpts := boshtpl.EvaluateOpts{
@@ -64,8 +72,19 @@ func (c *interpolateConfig) evaluate() ([]byte, error) {
 	return bytes, nil
 }
 
-func readYAMLFile(f io.Reader, dataType interface{}) error {
-	payload, err := ioutil.ReadAll(f)
+func (c *interpolateConfig) readFile(file string) ([]byte, error) {
+	if filepath.Ext(file) == "" {
+		file = fmt.Sprintf("%s.yml", file)
+	}
+	f, err := c.TemplateStore.Open(file)
+	if err != nil {
+		return []byte{}, err
+	}
+	return ioutil.ReadAll(f)
+}
+
+func (c *interpolateConfig) readYAMLFile(file string, dataType interface{}) error {
+	payload, err := c.readFile(file)
 	if err != nil {
 		return err
 	}

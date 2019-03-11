@@ -28,6 +28,17 @@ type FakeOpsmanClient struct {
 	configureAuthenticationReturnsOnCall map[int]struct {
 		result1 error
 	}
+	ConfigureDirectorStub        func([]byte) error
+	configureDirectorMutex       sync.RWMutex
+	configureDirectorArgsForCall []struct {
+		arg1 []byte
+	}
+	configureDirectorReturns struct {
+		result1 error
+	}
+	configureDirectorReturnsOnCall map[int]struct {
+		result1 error
+	}
 	ConfigureProductStub        func([]byte) error
 	configureProductMutex       sync.RWMutex
 	configureProductArgsForCall []struct {
@@ -187,6 +198,71 @@ func (fake *FakeOpsmanClient) ConfigureAuthenticationReturnsOnCall(i int, result
 		})
 	}
 	fake.configureAuthenticationReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeOpsmanClient) ConfigureDirector(arg1 []byte) error {
+	var arg1Copy []byte
+	if arg1 != nil {
+		arg1Copy = make([]byte, len(arg1))
+		copy(arg1Copy, arg1)
+	}
+	fake.configureDirectorMutex.Lock()
+	ret, specificReturn := fake.configureDirectorReturnsOnCall[len(fake.configureDirectorArgsForCall)]
+	fake.configureDirectorArgsForCall = append(fake.configureDirectorArgsForCall, struct {
+		arg1 []byte
+	}{arg1Copy})
+	fake.recordInvocation("ConfigureDirector", []interface{}{arg1Copy})
+	fake.configureDirectorMutex.Unlock()
+	if fake.ConfigureDirectorStub != nil {
+		return fake.ConfigureDirectorStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.configureDirectorReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeOpsmanClient) ConfigureDirectorCallCount() int {
+	fake.configureDirectorMutex.RLock()
+	defer fake.configureDirectorMutex.RUnlock()
+	return len(fake.configureDirectorArgsForCall)
+}
+
+func (fake *FakeOpsmanClient) ConfigureDirectorCalls(stub func([]byte) error) {
+	fake.configureDirectorMutex.Lock()
+	defer fake.configureDirectorMutex.Unlock()
+	fake.ConfigureDirectorStub = stub
+}
+
+func (fake *FakeOpsmanClient) ConfigureDirectorArgsForCall(i int) []byte {
+	fake.configureDirectorMutex.RLock()
+	defer fake.configureDirectorMutex.RUnlock()
+	argsForCall := fake.configureDirectorArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeOpsmanClient) ConfigureDirectorReturns(result1 error) {
+	fake.configureDirectorMutex.Lock()
+	defer fake.configureDirectorMutex.Unlock()
+	fake.ConfigureDirectorStub = nil
+	fake.configureDirectorReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeOpsmanClient) ConfigureDirectorReturnsOnCall(i int, result1 error) {
+	fake.configureDirectorMutex.Lock()
+	defer fake.configureDirectorMutex.Unlock()
+	fake.ConfigureDirectorStub = nil
+	if fake.configureDirectorReturnsOnCall == nil {
+		fake.configureDirectorReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.configureDirectorReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
 }
@@ -503,6 +579,8 @@ func (fake *FakeOpsmanClient) Invocations() map[string][][]interface{} {
 	defer fake.applyChangesMutex.RUnlock()
 	fake.configureAuthenticationMutex.RLock()
 	defer fake.configureAuthenticationMutex.RUnlock()
+	fake.configureDirectorMutex.RLock()
+	defer fake.configureDirectorMutex.RUnlock()
 	fake.configureProductMutex.RLock()
 	defer fake.configureProductMutex.RUnlock()
 	fake.downloadProductMutex.RLock()
