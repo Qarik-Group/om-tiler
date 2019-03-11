@@ -9,14 +9,14 @@ import (
 	"github.com/starkandwayne/om-configurator/configurator"
 )
 
-type PivnetConfig struct {
+type PivnetEulaAccepter struct {
 	Endpoint  string
 	Token     string
 	UserAgent string
 	Logger    *log.Logger
 }
 
-func (c *PivnetConfig) AcceptEULA(a configurator.DownloadProductArgs) error {
+func (c *PivnetEulaAccepter) Accept(a configurator.DownloadProductArgs) error {
 	client := c.getClient()
 
 	ok, err := client.Auth.Check()
@@ -48,7 +48,7 @@ func releaseIDForVersion(c *gopivnet.Client, slug, version string) (int, error) 
 	)
 }
 
-func (c *PivnetConfig) getClient() gopivnet.Client {
+func (c *PivnetEulaAccepter) getClient() gopivnet.Client {
 	endpoint := c.Endpoint
 	if c.Endpoint == "" {
 		endpoint = gopivnet.DefaultHost

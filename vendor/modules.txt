@@ -109,23 +109,24 @@ github.com/onsi/ginkgo/internal/specrunner
 github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty
 # github.com/onsi/gomega v1.4.3
 github.com/onsi/gomega
+github.com/onsi/gomega/ghttp
 github.com/onsi/gomega/internal/assertion
 github.com/onsi/gomega/internal/asyncassertion
 github.com/onsi/gomega/internal/testingtsupport
 github.com/onsi/gomega/matchers
 github.com/onsi/gomega/types
+github.com/onsi/gomega/gbytes
 github.com/onsi/gomega/internal/oraclematcher
 github.com/onsi/gomega/format
 github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
-github.com/onsi/gomega/gbytes
 github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 # github.com/pivotal-cf/go-pivnet v0.0.51
-github.com/pivotal-cf/go-pivnet/logshim
-github.com/pivotal-cf/go-pivnet/logger
 github.com/pivotal-cf/go-pivnet
+github.com/pivotal-cf/go-pivnet/logshim
 github.com/pivotal-cf/go-pivnet/download
+github.com/pivotal-cf/go-pivnet/logger
 # github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df
 github.com/pivotal-cf/jhanda
 github.com/pivotal-cf/jhanda/internal/parser

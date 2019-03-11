@@ -89,12 +89,12 @@ func (c *Client) ConfigureAuthentication() error {
 
 func (c *Client) DownloadProduct(a configurator.DownloadProductArgs) error {
 	if c.config.PivnetUserAgent != "" {
-		piv := PivnetConfig{
+		piv := PivnetEulaAccepter{
 			Token:     c.config.PivnetToken,
 			UserAgent: c.config.PivnetUserAgent,
 			Logger:    c.log,
 		}
-		err := piv.AcceptEULA(a)
+		err := piv.Accept(a)
 		if err != nil {
 			return err
 		}
