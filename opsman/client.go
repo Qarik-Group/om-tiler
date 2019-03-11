@@ -25,6 +25,7 @@ type Config struct {
 	DecryptionPassphrase string
 	SkipSSLVerification  bool
 	PivnetToken          string
+	PivnetUserAgent      string
 }
 
 type Client struct {
@@ -87,6 +88,18 @@ func (c *Client) ConfigureAuthentication() error {
 }
 
 func (c *Client) DownloadProduct(a configurator.DownloadProductArgs) error {
+	if c.config.PivnetUserAgent != "" {
+		piv := PivnetConfig{
+			Token:     c.config.PivnetToken,
+			UserAgent: c.config.PivnetUserAgent,
+			Logger:    c.log,
+		}
+		err := piv.AcceptEULA(a)
+		if err != nil {
+			return err
+		}
+	}
+
 	args := []string{
 		fmt.Sprintf("--output-directory=%s", a.OutputDirectory),
 		fmt.Sprintf("--pivnet-api-token=%s", c.config.PivnetToken),
