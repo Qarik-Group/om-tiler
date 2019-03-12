@@ -9,18 +9,13 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func (c *Configurator) Apply(deploymentFilePath string) error {
+func (c *Configurator) Apply(t Template) error {
+	db, err := newTemplateRenderer(t, c.templateStore).evaluate()
+	if err != nil {
+		return err
+	}
+
 	var deployment Deployment
-	df, err := c.templateStore.Open(deploymentFilePath)
-	if err != nil {
-		return err
-	}
-
-	db, err := ioutil.ReadAll(df)
-	if err != nil {
-		return err
-	}
-
 	if err = yaml.Unmarshal(db, &deployment); err != nil {
 		return err
 	}
@@ -108,15 +103,7 @@ func (c *Configurator) downloadAndUploadProduct(p PivnetMeta) error {
 }
 
 func (c *Configurator) configureProduct(t Tile) error {
-	ic := interpolateConfig{
-		TemplateFile:  t.Manifest,
-		OpsFiles:      t.OpsFiles,
-		VarsFiles:     t.VarsFiles,
-		Vars:          t.Vars,
-		TemplateStore: c.templateStore,
-	}
-
-	tpl, err := ic.evaluate()
+	tpl, err := newTemplateRenderer(t.ToTemplate(), c.templateStore).evaluate()
 	if err != nil {
 		return err
 	}
@@ -125,15 +112,7 @@ func (c *Configurator) configureProduct(t Tile) error {
 }
 
 func (c *Configurator) configureDirector(d Director) error {
-	ic := interpolateConfig{
-		TemplateFile:  d.Manifest,
-		OpsFiles:      d.OpsFiles,
-		VarsFiles:     d.VarsFiles,
-		Vars:          d.Vars,
-		TemplateStore: c.templateStore,
-	}
-
-	tpl, err := ic.evaluate()
+	tpl, err := newTemplateRenderer(d.ToTemplate(), c.templateStore).evaluate()
 	if err != nil {
 		return err
 	}

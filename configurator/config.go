@@ -37,10 +37,28 @@ type Template struct {
 
 type Director Template
 
+func (d *Director) ToTemplate() Template {
+	return Template{
+		Manifest:  d.Manifest,
+		OpsFiles:  d.OpsFiles,
+		VarsFiles: d.VarsFiles,
+		Vars:      d.Vars,
+	}
+}
+
 type Tile struct {
 	PivnetMeta PivnetMeta `yaml:"pivnet" validate:"required,dive"`
 	OpsmanMeta OpsmanMeta `yaml:"opsman" validate:"required,dive"`
 	Template   `yaml:",inline"`
+}
+
+func (t *Tile) ToTemplate() Template {
+	return Template{
+		Manifest:  t.Manifest,
+		OpsFiles:  t.OpsFiles,
+		VarsFiles: t.VarsFiles,
+		Vars:      t.Vars,
+	}
 }
 
 type PivnetMeta struct {
