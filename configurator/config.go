@@ -25,20 +25,20 @@ type Deployment struct {
 	Tiles    []Tile   `yaml:"tiles" validate:"required,dive"`
 }
 
-func (d *Deployment) Validate(ts http.FileSystem) error {
+func (d *Deployment) Validate(ts http.FileSystem, gv map[string]interface{}) error {
 	err := validate("Deployment", d)
 	if err != nil {
 		return err
 	}
 
-	_, err = newTemplateRenderer(d.Director.ToTemplate(), ts).evaluate()
+	_, err = newTemplateRenderer(d.Director.ToTemplate(), ts).evaluate(gv)
 	if err != nil {
 		return err
 	}
 
 	for _, tile := range d.Tiles {
 		_, err = newTemplateRenderer(tile.ToTemplate(), ts).
-			evaluate()
+			evaluate(gv)
 		if err != nil {
 			return err
 		}

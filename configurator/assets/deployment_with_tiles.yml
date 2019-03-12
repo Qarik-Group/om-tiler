@@ -5,8 +5,7 @@ director:
     iaas-configuration_associated_service_account: foo-account
     iaas-configuration_default_deployment_tag: example-tag
     iaas-configuration_guid: 4f510b72-62b9-4112-8cf4-b318b663b176
-    iaas-configuration_name: foo
-    iaas-configuration_project: example-project
+    iaas-configuration_name: ((real-iaas-configuration_name))
 tiles:
 - pivnet:
     slug: p-healthwatch

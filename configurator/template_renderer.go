@@ -21,7 +21,7 @@ func newTemplateRenderer(t Template, ts http.FileSystem) *templateRenderer {
 	return &templateRenderer{Template: t, TemplateStore: ts}
 }
 
-func (c *templateRenderer) evaluate() ([]byte, error) {
+func (c *templateRenderer) evaluate(globalVars map[string]interface{}) ([]byte, error) {
 	template, err := c.readFile(c.Template.Manifest)
 	if err != nil {
 		return []byte{}, err
@@ -55,6 +55,10 @@ func (c *templateRenderer) evaluate() ([]byte, error) {
 		}
 	}
 
+	for k, v := range globalVars {
+		staticVars[k] = v
+	}
+
 	for k, v := range c.Template.Vars {
 		staticVars[k] = v
 	}
@@ -62,7 +66,7 @@ func (c *templateRenderer) evaluate() ([]byte, error) {
 	evalOpts := boshtpl.EvaluateOpts{
 		UnescapedMultiline: true,
 		ExpectAllKeys:      true,
-		ExpectAllVarsUsed:  true,
+		ExpectAllVarsUsed:  false,
 	}
 
 	bytes, err := tpl.Evaluate(staticVars, ops, evalOpts)

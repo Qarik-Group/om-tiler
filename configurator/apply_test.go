@@ -59,7 +59,14 @@ var _ = Describe("Apply", func() {
 			templateStore := http.Dir(assetsDir())
 			configurator, err := NewConfigurator(templateStore, fakeOpsman, logger)
 			Expect(err).ToNot(HaveOccurred())
-			err = configurator.Apply(Template{Manifest: "deployment_with_tiles.yml"})
+			err = configurator.Apply(Template{
+				Manifest: "deployment_with_tiles.yml",
+				Vars: map[string]interface{}{
+					"iaas-configuration_project":   "example-project",
+					"iaas-configuration_name":      "bar",
+					"real-iaas-configuration_name": "foo",
+				},
+			})
 			Expect(err).ToNot(HaveOccurred())
 		})
 
