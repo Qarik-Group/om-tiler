@@ -20,7 +20,7 @@ func (c *Configurator) Apply(t Template) error {
 		return err
 	}
 
-	if err = deployment.Validate(); err != nil {
+	if err = deployment.Validate(c.templateStore); err != nil {
 		return err
 	}
 
