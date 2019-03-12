@@ -151,6 +151,8 @@ func (c *Client) ConfigureProduct(config []byte) error {
 	if err != nil {
 		return err
 	}
+	defer os.Remove(configFile)
+
 	args := []string{
 		fmt.Sprintf("--config=%s", configFile),
 	}
@@ -164,6 +166,8 @@ func (c *Client) ConfigureDirector(config []byte) error {
 	if err != nil {
 		return err
 	}
+	defer os.Remove(configFile)
+
 	args := []string{
 		fmt.Sprintf("--config=%s", configFile),
 	}
@@ -180,7 +184,6 @@ func tmpConfigFile(config []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer os.Remove(configFile.Name())
 
 	if _, err = configFile.Write(config); err != nil {
 		return "", err
