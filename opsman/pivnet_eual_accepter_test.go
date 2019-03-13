@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/starkandwayne/om-configurator/configurator"
-	. "github.com/starkandwayne/om-configurator/opsman"
+	. "github.com/starkandwayne/om-tiler/opsman"
+	"github.com/starkandwayne/om-tiler/tiler"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -90,7 +90,7 @@ var _ = Describe("PivnetEULAAccepter", func() {
 				),
 			)
 
-			Expect(accepter.Accept(configurator.DownloadProductArgs{
+			Expect(accepter.Accept(tiler.DownloadProductArgs{
 				PivnetProductSlug:    productSlug,
 				PivnetProductVersion: productVersion,
 			})).To(Succeed())

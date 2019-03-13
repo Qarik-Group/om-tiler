@@ -1,4 +1,4 @@
-package configurator_test
+package tiler_test
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	. "github.com/starkandwayne/om-configurator/configurator"
-	"github.com/starkandwayne/om-configurator/configurator/configuratorfakes"
+	. "github.com/starkandwayne/om-tiler/tiler"
+	"github.com/starkandwayne/om-tiler/tiler/tilerfakes"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -18,7 +18,7 @@ import (
 
 var _ = Describe("Apply", func() {
 	var (
-		fakeOpsman *configuratorfakes.FakeOpsmanClient
+		fakeOpsman *tilerfakes.FakeOpsmanClient
 	)
 
 	assetsDir := func() string {
@@ -34,7 +34,7 @@ var _ = Describe("Apply", func() {
 
 	Context("Given a deployment with products", func() {
 		BeforeEach(func() {
-			fakeOpsman = &configuratorfakes.FakeOpsmanClient{
+			fakeOpsman = &tilerfakes.FakeOpsmanClient{
 				DownloadProductStub: func(c DownloadProductArgs) error {
 					_, err := os.Create(filepath.Join(
 						c.OutputDirectory,
@@ -57,9 +57,9 @@ var _ = Describe("Apply", func() {
 
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
-			configurator, err := NewConfigurator(templateStore, fakeOpsman, logger)
+			tiler, err := NewTiler(templateStore, fakeOpsman, logger)
 			Expect(err).ToNot(HaveOccurred())
-			err = configurator.Apply(Template{
+			err = tiler.Apply(Template{
 				Manifest: "deployment_with_tiles.yml",
 				Vars: map[string]interface{}{
 					"iaas-configuration_project":   "example-project",

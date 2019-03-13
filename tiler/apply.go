@@ -1,4 +1,4 @@
-package configurator
+package tiler
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func (c *Configurator) Apply(t Template) error {
+func (c *Tiler) Apply(t Template) error {
 	db, err := newTemplateRenderer(t, c.templateStore).evaluate(nil)
 	if err != nil {
 		return err
@@ -62,7 +62,7 @@ func (c *Configurator) Apply(t Template) error {
 	return nil
 }
 
-func (c *Configurator) downloadAndUploadProduct(p PivnetMeta) error {
+func (c *Tiler) downloadAndUploadProduct(p PivnetMeta) error {
 	dir, err := ioutil.TempDir("", p.Slug)
 	if err != nil {
 		return err
@@ -102,7 +102,7 @@ func (c *Configurator) downloadAndUploadProduct(p PivnetMeta) error {
 	return c.client.UploadStemcell(stemcell)
 }
 
-func (c *Configurator) configureProduct(t Tile, gv map[string]interface{}) error {
+func (c *Tiler) configureProduct(t Tile, gv map[string]interface{}) error {
 	tpl, err := newTemplateRenderer(t.ToTemplate(), c.templateStore).evaluate(gv)
 	if err != nil {
 		return err
@@ -111,7 +111,7 @@ func (c *Configurator) configureProduct(t Tile, gv map[string]interface{}) error
 	return c.client.ConfigureProduct(tpl)
 }
 
-func (c *Configurator) configureDirector(d Director, gv map[string]interface{}) error {
+func (c *Tiler) configureDirector(d Director, gv map[string]interface{}) error {
 	tpl, err := newTemplateRenderer(d.ToTemplate(), c.templateStore).evaluate(gv)
 	if err != nil {
 		return err

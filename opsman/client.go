@@ -15,7 +15,7 @@ import (
 	"github.com/pivotal-cf/om/formcontent"
 	"github.com/pivotal-cf/om/network"
 	"github.com/pivotal-cf/om/progress"
-	"github.com/starkandwayne/om-configurator/configurator"
+	"github.com/starkandwayne/om-tiler/tiler"
 )
 
 type Config struct {
@@ -87,7 +87,7 @@ func (c *Client) ConfigureAuthentication() error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) DownloadProduct(a configurator.DownloadProductArgs) error {
+func (c *Client) DownloadProduct(a tiler.DownloadProductArgs) error {
 	if c.config.PivnetUserAgent != "" {
 		piv := PivnetEulaAccepter{
 			Token:     c.config.PivnetToken,
@@ -137,7 +137,7 @@ func (c *Client) UploadStemcell(stemcell string) error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) StageProduct(a configurator.StageProductArgs) error {
+func (c *Client) StageProduct(a tiler.StageProductArgs) error {
 	args := []string{
 		fmt.Sprintf("--product-name=%s", a.ProductName),
 		fmt.Sprintf("--product-version=%s", a.ProductVersion),

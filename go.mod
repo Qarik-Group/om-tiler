@@ -1,4 +1,4 @@
-module github.com/starkandwayne/om-configurator
+module github.com/starkandwayne/om-tiler
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect

@@ -1,4 +1,4 @@
-package configurator
+package tiler
 
 type DownloadProductArgs struct {
 	OutputDirectory      string

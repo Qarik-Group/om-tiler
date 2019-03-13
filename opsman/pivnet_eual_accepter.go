@@ -6,7 +6,7 @@ import (
 
 	gopivnet "github.com/pivotal-cf/go-pivnet"
 	"github.com/pivotal-cf/go-pivnet/logshim"
-	"github.com/starkandwayne/om-configurator/configurator"
+	"github.com/starkandwayne/om-tiler/tiler"
 )
 
 type PivnetEulaAccepter struct {
@@ -16,7 +16,7 @@ type PivnetEulaAccepter struct {
 	Logger    *log.Logger
 }
 
-func (c *PivnetEulaAccepter) Accept(a configurator.DownloadProductArgs) error {
+func (c *PivnetEulaAccepter) Accept(a tiler.DownloadProductArgs) error {
 	client := c.getClient()
 
 	ok, err := client.Auth.Check()
