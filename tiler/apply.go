@@ -6,21 +6,16 @@ import (
 	"os"
 	"path/filepath"
 
-	yaml "gopkg.in/yaml.v2"
+	"github.com/starkandwayne/om-tiler/pattern"
 )
 
-func (c *Tiler) Apply(t Template) error {
-	db, err := newTemplateRenderer(t, c.templateStore).evaluate(nil)
+func (c *Tiler) Apply(t pattern.Template) error {
+	p, err := pattern.NewPattern(t)
 	if err != nil {
 		return err
 	}
 
-	var deployment Deployment
-	if err = yaml.Unmarshal(db, &deployment); err != nil {
-		return err
-	}
-
-	if err = deployment.Validate(c.templateStore, t.Vars); err != nil {
+	if err = p.Validate(true); err != nil {
 		return err
 	}
 
@@ -29,26 +24,26 @@ func (c *Tiler) Apply(t Template) error {
 		return err
 	}
 
-	err = c.configureDirector(deployment.Director, t.Vars)
+	err = c.configureDirector(p.Director)
 	if err != nil {
 		return err
 	}
 
-	for _, tile := range deployment.Tiles {
+	for _, tile := range p.Tiles {
 		err = c.downloadAndUploadProduct(tile.PivnetMeta)
 		if err != nil {
 			return err
 		}
 
 		err = c.client.StageProduct(StageProductArgs{
-			ProductName:    tile.OpsmanMeta.Name,
-			ProductVersion: tile.OpsmanMeta.Version,
+			ProductName:    tile.Name,
+			ProductVersion: tile.Version,
 		})
 		if err != nil {
 			return err
 		}
 
-		err = c.configureProduct(tile, t.Vars)
+		err = c.configureProduct(tile)
 		if err != nil {
 			return err
 		}
@@ -62,7 +57,7 @@ func (c *Tiler) Apply(t Template) error {
 	return nil
 }
 
-func (c *Tiler) downloadAndUploadProduct(p PivnetMeta) error {
+func (c *Tiler) downloadAndUploadProduct(p pattern.PivnetMeta) error {
 	dir, err := ioutil.TempDir("", p.Slug)
 	if err != nil {
 		return err
@@ -102,8 +97,8 @@ func (c *Tiler) downloadAndUploadProduct(p PivnetMeta) error {
 	return c.client.UploadStemcell(stemcell)
 }
 
-func (c *Tiler) configureProduct(t Tile, gv map[string]interface{}) error {
-	tpl, err := newTemplateRenderer(t.ToTemplate(), c.templateStore).evaluate(gv)
+func (c *Tiler) configureProduct(t pattern.Tile) error {
+	tpl, err := t.ToTemplate().Evaluate(true)
 	if err != nil {
 		return err
 	}
@@ -111,8 +106,8 @@ func (c *Tiler) configureProduct(t Tile, gv map[string]interface{}) error {
 	return c.client.ConfigureProduct(tpl)
 }
 
-func (c *Tiler) configureDirector(d Director, gv map[string]interface{}) error {
-	tpl, err := newTemplateRenderer(d.ToTemplate(), c.templateStore).evaluate(gv)
+func (c *Tiler) configureDirector(d pattern.Director) error {
+	tpl, err := d.ToTemplate().Evaluate(true)
 	if err != nil {
 		return err
 	}

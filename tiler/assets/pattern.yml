@@ -7,13 +7,12 @@ director:
     iaas-configuration_guid: 4f510b72-62b9-4112-8cf4-b318b663b176
     iaas-configuration_name: ((real-iaas-configuration_name))
 tiles:
-- pivnet:
+- name: p-healthwatch
+  version: 1.2.3-build.1
+  pivnet:
     slug: p-healthwatch
     version: 1.2.3
     stemcell_iaas: vsphere
-  opsman:
-    name: p-healthwatch
-    version: 1.2.3-build.1
   manifest: tiles/p-healthwatch/product.yml
   ops_files:
   - tiles/p-healthwatch/network/2-az-configuration.yml
@@ -35,12 +34,11 @@ tiles:
     singleton_availability_zone: network1
     redis_elb_names: elb1
     healthwatch-forwarder_instances: 5
-- pivnet:
+- name: cf
+  version: 3.2.1-build.3
+  pivnet:
     slug: elastic-runtime
     version: 3.2.1
     glob: "srt*.pivotal"
     stemcell_iaas: gcp
-  opsman:
-    name: cf
-    version: 3.2.1-build.3
   manifest: tiles/elastic-runtime/product.yml

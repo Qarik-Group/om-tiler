@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/starkandwayne/om-tiler/pattern"
 	. "github.com/starkandwayne/om-tiler/tiler"
 	"github.com/starkandwayne/om-tiler/tiler/tilerfakes"
 
@@ -57,15 +58,16 @@ var _ = Describe("Apply", func() {
 
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
-			tiler, err := NewTiler(templateStore, fakeOpsman, logger)
+			tiler, err := NewTiler(fakeOpsman, logger)
 			Expect(err).ToNot(HaveOccurred())
-			err = tiler.Apply(Template{
-				Manifest: "deployment_with_tiles.yml",
+			err = tiler.Apply(pattern.Template{
+				Manifest: "pattern.yml",
 				Vars: map[string]interface{}{
 					"iaas-configuration_project":   "example-project",
 					"iaas-configuration_name":      "bar",
 					"real-iaas-configuration_name": "foo",
 				},
+				Store: templateStore,
 			})
 			Expect(err).ToNot(HaveOccurred())
 		})

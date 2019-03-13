@@ -1,9 +1,8 @@
-package tiler
+package pattern
 
 import (
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"path/filepath"
 
 	yaml "gopkg.in/yaml.v2"
@@ -12,17 +11,8 @@ import (
 	"github.com/cppforlife/go-patch/patch"
 )
 
-type templateRenderer struct {
-	Template      Template
-	TemplateStore http.FileSystem
-}
-
-func newTemplateRenderer(t Template, ts http.FileSystem) *templateRenderer {
-	return &templateRenderer{Template: t, TemplateStore: ts}
-}
-
-func (c *templateRenderer) evaluate(globalVars map[string]interface{}) ([]byte, error) {
-	template, err := c.readFile(c.Template.Manifest)
+func (t *Template) Evaluate(expectAllKeys bool) ([]byte, error) {
+	template, err := t.readFile(t.Manifest)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -31,9 +21,9 @@ func (c *templateRenderer) evaluate(globalVars map[string]interface{}) ([]byte, 
 	staticVars := boshtpl.StaticVariables{}
 	ops := patch.Ops{}
 
-	for _, file := range c.Template.OpsFiles {
+	for _, file := range t.OpsFiles {
 		var opDefs []patch.OpDefinition
-		err = c.readYAMLFile(file, &opDefs)
+		err = t.readYAMLFile(file, &opDefs)
 		if err != nil {
 			return nil, err
 		}
@@ -44,9 +34,9 @@ func (c *templateRenderer) evaluate(globalVars map[string]interface{}) ([]byte, 
 		ops = append(ops, op)
 	}
 
-	for _, file := range c.Template.VarsFiles {
+	for _, file := range t.VarsFiles {
 		var fileVars boshtpl.StaticVariables
-		err = c.readYAMLFile(file, &fileVars)
+		err = t.readYAMLFile(file, &fileVars)
 		if err != nil {
 			return nil, err
 		}
@@ -55,17 +45,13 @@ func (c *templateRenderer) evaluate(globalVars map[string]interface{}) ([]byte, 
 		}
 	}
 
-	for k, v := range globalVars {
-		staticVars[k] = v
-	}
-
-	for k, v := range c.Template.Vars {
+	for k, v := range t.Vars {
 		staticVars[k] = v
 	}
 
 	evalOpts := boshtpl.EvaluateOpts{
 		UnescapedMultiline: true,
-		ExpectAllKeys:      true,
+		ExpectAllKeys:      expectAllKeys,
 		ExpectAllVarsUsed:  false,
 	}
 
@@ -77,19 +63,19 @@ func (c *templateRenderer) evaluate(globalVars map[string]interface{}) ([]byte, 
 	return bytes, nil
 }
 
-func (c *templateRenderer) readFile(file string) ([]byte, error) {
+func (t *Template) readFile(file string) ([]byte, error) {
 	if filepath.Ext(file) == "" {
 		file = fmt.Sprintf("%s.yml", file)
 	}
-	f, err := c.TemplateStore.Open(file)
+	f, err := t.Store.Open(file)
 	if err != nil {
 		return []byte{}, err
 	}
 	return ioutil.ReadAll(f)
 }
 
-func (c *templateRenderer) readYAMLFile(file string, dataType interface{}) error {
-	payload, err := c.readFile(file)
+func (t *Template) readYAMLFile(file string, dataType interface{}) error {
+	payload, err := t.readFile(file)
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,6 @@ package tiler
 
 import (
 	"fmt"
-	"net/http"
 
 	validator "gopkg.in/go-playground/validator.v9"
 )
@@ -17,85 +16,9 @@ type Config struct {
 }
 
 func (c *Config) Validate() error {
-	return validate("Config", c)
-}
-
-type Deployment struct {
-	Director Director `yaml"director validate:"required,dive"`
-	Tiles    []Tile   `yaml:"tiles" validate:"required,dive"`
-}
-
-func (d *Deployment) Validate(ts http.FileSystem, gv map[string]interface{}) error {
-	err := validate("Deployment", d)
+	err := validator.New().Struct(c)
 	if err != nil {
-		return err
-	}
-
-	_, err = newTemplateRenderer(d.Director.ToTemplate(), ts).evaluate(gv)
-	if err != nil {
-		return err
-	}
-
-	for _, tile := range d.Tiles {
-		_, err = newTemplateRenderer(tile.ToTemplate(), ts).
-			evaluate(gv)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-type Template struct {
-	Manifest  string                 `yaml:"manifest"`
-	OpsFiles  []string               `yaml:"ops_files"`
-	VarsFiles []string               `yaml:"vars_files"`
-	Vars      map[string]interface{} `yaml:"vars"`
-}
-
-type Director Template
-
-func (d *Director) ToTemplate() Template {
-	return Template{
-		Manifest:  d.Manifest,
-		OpsFiles:  d.OpsFiles,
-		VarsFiles: d.VarsFiles,
-		Vars:      d.Vars,
-	}
-}
-
-type Tile struct {
-	PivnetMeta PivnetMeta `yaml:"pivnet" validate:"required,dive"`
-	OpsmanMeta OpsmanMeta `yaml:"opsman" validate:"required,dive"`
-	Template   `yaml:",inline"`
-}
-
-func (t *Tile) ToTemplate() Template {
-	return Template{
-		Manifest:  t.Manifest,
-		OpsFiles:  t.OpsFiles,
-		VarsFiles: t.VarsFiles,
-		Vars:      t.Vars,
-	}
-}
-
-type PivnetMeta struct {
-	Slug         string `yaml:"slug" validate:"required"`
-	Version      string `yaml:"version" validate:"required"`
-	Glob         string `yaml:"glob"`
-	StemcellIaas string `yaml:"stemcell_iaas" validate:"required"`
-}
-
-type OpsmanMeta struct {
-	Name    string `yaml:"name" validate:"required"`
-	Version string `yaml:"version" validate:"required"`
-}
-
-func validate(name string, s interface{}) error {
-	err := validator.New().Struct(s)
-	if err != nil {
-		return fmt.Errorf("%s has error(s):\n%+v\n", name, err)
+		return fmt.Errorf("tiler.Config has error(s):\n%+v\n", err)
 	}
 	return nil
 }
