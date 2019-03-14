@@ -3,6 +3,8 @@ package pattern
 import (
 	"fmt"
 	"net/http"
+	"reflect"
+	"strings"
 
 	validator "gopkg.in/go-playground/validator.v9"
 	yaml "gopkg.in/yaml.v2"
@@ -40,16 +42,18 @@ func NewPattern(t Template) (p Pattern, err error) {
 	return p, err
 }
 
-func mergeVars(target map[string]interface{}, source map[string]interface{}) {
-	for k, v := range source {
-		if _, ok := target[k]; !ok {
-			target[k] = v
-		}
-	}
-}
-
 func (p *Pattern) Validate(expectAllKeys bool) error {
-	err := validator.New().Struct(p)
+	validate := validator.New()
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
+
+		if name == "-" {
+			return ""
+		}
+
+		return name
+	})
+	err := validate.Struct(p)
 	if err != nil {
 		return fmt.Errorf("pattern.Pattern has error(s):\n%+v\n", err)
 	}
@@ -90,10 +94,10 @@ func (d *Director) ToTemplate() *Template {
 }
 
 type Tile struct {
-	Name       string     `yaml:"name" validate:"required"`
-	Version    string     `yaml:"version" validate:"required"`
-	PivnetMeta PivnetMeta `yaml:"pivnet" validate:"required,dive"`
-	Template   `yaml:",inline"`
+	Name     string     `yaml:"name" validate:"required"`
+	Product  PivnetFile `yaml:"product" validate:"required,dive"`
+	Stemcell PivnetFile `yaml:"stemcell" validate:"required,dive"`
+	Template `yaml:",inline"`
 }
 
 func (t *Tile) ToTemplate() *Template {
@@ -106,9 +110,16 @@ func (t *Tile) ToTemplate() *Template {
 	}
 }
 
-type PivnetMeta struct {
-	Slug         string `yaml:"slug" validate:"required"`
-	Version      string `yaml:"version" validate:"required"`
-	Glob         string `yaml:"glob"`
-	StemcellIaas string `yaml:"stemcell_iaas" validate:"required"`
+type PivnetFile struct {
+	Slug    string `yaml:"product_slug" validate:"required"`
+	Version string `yaml:"file_version" validate:"required"`
+	Glob    string `yaml:"file_glob" validate:"required"`
+}
+
+func mergeVars(target map[string]interface{}, source map[string]interface{}) {
+	for k, v := range source {
+		if _, ok := target[k]; !ok {
+			target[k] = v
+		}
+	}
 }

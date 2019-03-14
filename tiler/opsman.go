@@ -1,25 +1,18 @@
 package tiler
 
-type DownloadProductArgs struct {
-	OutputDirectory      string
-	PivnetProductSlug    string
-	PivnetProductVersion string
-	PivnetProductGlob    string
-	StemcellIaas         string
-}
+import (
+	"os"
 
-type StageProductArgs struct {
-	ProductName    string
-	ProductVersion string
-}
+	"github.com/starkandwayne/om-tiler/pattern"
+)
 
 //go:generate counterfeiter . OpsmanClient
 type OpsmanClient interface {
 	ConfigureAuthentication() error
-	DownloadProduct(DownloadProductArgs) error
-	UploadProduct(string) error
-	UploadStemcell(string) error
-	StageProduct(StageProductArgs) error
+	UploadProduct(*os.File) error
+	UploadStemcell(*os.File) error
+	FilesUploaded(pattern.Tile) (bool, error)
+	StageProduct(pattern.Tile) error
 	ConfigureDirector([]byte) error
 	ConfigureProduct([]byte) error
 	ApplyChanges() error

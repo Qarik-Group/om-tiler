@@ -8,14 +8,13 @@ import (
 	"time"
 
 	"github.com/gosuri/uilive"
-	"github.com/pivotal-cf/go-pivnet/logshim"
 	"github.com/pivotal-cf/om/api"
 	"github.com/pivotal-cf/om/commands"
 	"github.com/pivotal-cf/om/extractor"
 	"github.com/pivotal-cf/om/formcontent"
 	"github.com/pivotal-cf/om/network"
 	"github.com/pivotal-cf/om/progress"
-	"github.com/starkandwayne/om-tiler/tiler"
+	"github.com/starkandwayne/om-tiler/pattern"
 )
 
 type Config struct {
@@ -24,8 +23,6 @@ type Config struct {
 	Password             string
 	DecryptionPassphrase string
 	SkipSSLVerification  bool
-	PivnetToken          string
-	PivnetUserAgent      string
 }
 
 type Client struct {
@@ -87,38 +84,13 @@ func (c *Client) ConfigureAuthentication() error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) DownloadProduct(a tiler.DownloadProductArgs) error {
-	if c.config.PivnetUserAgent != "" {
-		piv := PivnetEulaAccepter{
-			Token:     c.config.PivnetToken,
-			UserAgent: c.config.PivnetUserAgent,
-			Logger:    c.log,
-		}
-		err := piv.Accept(a)
-		if err != nil {
-			return err
-		}
-	}
-
-	args := []string{
-		fmt.Sprintf("--output-directory=%s", a.OutputDirectory),
-		fmt.Sprintf("--pivnet-api-token=%s", c.config.PivnetToken),
-		fmt.Sprintf("--pivnet-product-slug=%s", a.PivnetProductSlug),
-		fmt.Sprintf("--pivnet-file-glob=%s", a.PivnetProductGlob),
-		fmt.Sprintf("--product-version=%s", a.PivnetProductVersion),
-		fmt.Sprintf("--stemcell-iaas=%s", a.StemcellIaas),
-		"--download-stemcell",
-	}
-	pivnetFactory := commands.DefaultPivnetFactory
-	stower := commands.DefaultStow{}
-	pivnetLogWriter := logshim.NewLogShim(c.log, c.log, false)
-	cmd := commands.NewDownloadProduct(os.Environ, pivnetLogWriter, os.Stdout, pivnetFactory, stower)
-	return cmd.Execute(args)
+func (c *Client) FilesUploaded(t pattern.Tile) (bool, error) {
+	return false, nil
 }
 
-func (c *Client) UploadProduct(productFile string) error {
+func (c *Client) UploadProduct(p *os.File) error {
 	args := []string{
-		fmt.Sprintf("--product=%s", productFile),
+		fmt.Sprintf("--product=%s", p.Name()),
 		fmt.Sprintf("--polling-interval=%s", pollingIntervalSec),
 	}
 	form := formcontent.NewForm()
@@ -127,9 +99,9 @@ func (c *Client) UploadProduct(productFile string) error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) UploadStemcell(stemcell string) error {
+func (c *Client) UploadStemcell(s *os.File) error {
 	args := []string{
-		fmt.Sprintf("--stemcell=%s", stemcell),
+		fmt.Sprintf("--stemcell=%s", s.Name()),
 		"--floating",
 	}
 	form := formcontent.NewForm()
@@ -137,10 +109,10 @@ func (c *Client) UploadStemcell(stemcell string) error {
 	return cmd.Execute(args)
 }
 
-func (c *Client) StageProduct(a tiler.StageProductArgs) error {
+func (c *Client) StageProduct(t pattern.Tile) error {
 	args := []string{
-		fmt.Sprintf("--product-name=%s", a.ProductName),
-		fmt.Sprintf("--product-version=%s", a.ProductVersion),
+		fmt.Sprintf("--product-name=%s", t.Name),
+		fmt.Sprintf("--product-version=%s", t.Product.Version),
 	}
 	cmd := commands.NewStageProduct(c.api, c.log)
 	return cmd.Execute(args)

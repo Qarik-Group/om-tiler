@@ -1,26 +1,34 @@
-package opsman_test
+package pivnet_test
 
 import (
 	"fmt"
 	"log"
 	"net/http"
 
-	. "github.com/starkandwayne/om-tiler/opsman"
-	"github.com/starkandwayne/om-tiler/tiler"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
+	"github.com/starkandwayne/om-tiler/mover"
+	"github.com/starkandwayne/om-tiler/pattern"
+	. "github.com/starkandwayne/om-tiler/pivnet"
 )
 
-var _ = Describe("PivnetEULAAccepter", func() {
+var _ = Describe("Client", func() {
+	It("Implements the mover.Pivnet interface", func() {
+		logger := log.New(GinkgoWriter, "", 0)
+		var client mover.PivnetClient
+		client = NewClient(Config{}, logger)
+		logger.Println(client) // use client so it compiles
+	})
+
 	var (
 		server     *ghttp.Server
-		accepter   PivnetEulaAccepter
+		client     *Client
 		token      string
 		apiAddress string
 		apiPrefix  string
 		userAgent  string
+		acceptEULA bool
 	)
 
 	BeforeEach(func() {
@@ -30,47 +38,40 @@ var _ = Describe("PivnetEULAAccepter", func() {
 		token = "my-auth-token"
 		userAgent = "pivnet-resource/0.1.0 (some-url)"
 		logger := log.New(GinkgoWriter, "", 0)
-		accepter = PivnetEulaAccepter{
-			Endpoint:  apiAddress,
-			Token:     token,
-			UserAgent: userAgent,
-			Logger:    logger,
-		}
+		client = NewClient(Config{
+			Host:       apiAddress,
+			Token:      token,
+			UserAgent:  userAgent,
+			Logger:     logger,
+			AcceptEULA: acceptEULA,
+		}, logger)
 	})
 
 	AfterEach(func() {
 		server.Close()
 	})
 
-	Describe("Accept", func() {
+	Describe("AcceptEULA", func() {
 		var (
 			productVersion    string
 			productSlug       string
+			fileVersion       string
 			releaseID         int
-			authURL           string
 			releasesURL       string
 			EULAAcceptanceURL string
 		)
 
 		BeforeEach(func() {
 			productSlug = "banana-slug"
-			productVersion = "3.2.1"
+			productVersion = "3.2"
+			fileVersion = "3.2-build.1"
 			releaseID = 42
-			authURL = apiPrefix + "/authentication"
 			releasesURL = fmt.Sprintf(apiPrefix+"/products/%s/releases", productSlug)
 			EULAAcceptanceURL = fmt.Sprintf(apiPrefix+"/products/%s/releases/%d/pivnet_resource_eula_acceptance", productSlug, releaseID)
 		})
 
 		It("accepts the EULA for a given release and product Version", func() {
-			server.AppendHandlers(
-				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", authURL),
-					ghttp.VerifyHeaderKV("Authorization", fmt.Sprintf("Token %s", token)),
-					ghttp.RespondWith(http.StatusOK, `{}`),
-				),
-			)
-
-			response := fmt.Sprintf(`{"releases":[{"id":40,"version":"3.2.0"},{"id":%d,"version":"%s"}]}`, releaseID, productVersion)
+			response := fmt.Sprintf(`{"releases":[{"id":40,"version":"3.3.0"},{"id":%d,"version":"%s"}]}`, releaseID, productVersion)
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("GET", releasesURL),
@@ -90,9 +91,10 @@ var _ = Describe("PivnetEULAAccepter", func() {
 				),
 			)
 
-			Expect(accepter.Accept(tiler.DownloadProductArgs{
-				PivnetProductSlug:    productSlug,
-				PivnetProductVersion: productVersion,
+			Expect(client.AcceptEULA(pattern.PivnetFile{
+				Slug:    productSlug,
+				Version: fileVersion,
+				Glob:    "*.tgz",
 			})).To(Succeed())
 		})
 	})

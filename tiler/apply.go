@@ -2,8 +2,6 @@ package tiler
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"github.com/starkandwayne/om-tiler/pattern"
@@ -30,15 +28,11 @@ func (c *Tiler) Apply(t pattern.Template) error {
 	}
 
 	for _, tile := range p.Tiles {
-		err = c.downloadAndUploadProduct(tile.PivnetMeta)
-		if err != nil {
+		if err = c.ensureFilesUploaded(tile); err != nil {
 			return err
 		}
 
-		err = c.client.StageProduct(StageProductArgs{
-			ProductName:    tile.Name,
-			ProductVersion: tile.Version,
-		})
+		err = c.client.StageProduct(tile)
 		if err != nil {
 			return err
 		}
@@ -57,39 +51,25 @@ func (c *Tiler) Apply(t pattern.Template) error {
 	return nil
 }
 
-func (c *Tiler) downloadAndUploadProduct(p pattern.PivnetMeta) error {
-	dir, err := ioutil.TempDir("", p.Slug)
+func (c *Tiler) ensureFilesUploaded(t pattern.Tile) error {
+	ok, err := c.client.FilesUploaded(t)
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(dir)
-
-	glob := p.Glob
-	if glob == "" {
-		glob = "*.pivotal"
+	if ok {
+		return nil
 	}
 
-	err = c.client.DownloadProduct(DownloadProductArgs{
-		OutputDirectory:      dir,
-		PivnetProductSlug:    p.Slug,
-		PivnetProductVersion: p.Version,
-		PivnetProductGlob:    glob,
-		StemcellIaas:         p.StemcellIaas,
-	})
+	product, err := c.mover.Get(t.Product)
 	if err != nil {
 		return err
 	}
 
-	tile, err := findFileInDir(dir, "*.pivotal")
-	if err != nil {
+	if err = c.client.UploadProduct(product); err != nil {
 		return err
 	}
 
-	if err = c.client.UploadProduct(tile); err != nil {
-		return err
-	}
-
-	stemcell, err := findFileInDir(dir, "*.tgz")
+	stemcell, err := c.mover.Get(t.Stemcell)
 	if err != nil {
 		return err
 	}

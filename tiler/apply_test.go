@@ -1,7 +1,6 @@
 package tiler_test
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -20,6 +19,7 @@ import (
 var _ = Describe("Apply", func() {
 	var (
 		fakeOpsman *tilerfakes.FakeOpsmanClient
+		fakeMover  *tilerfakes.FakeMover
 	)
 
 	assetsDir := func() string {
@@ -35,30 +35,15 @@ var _ = Describe("Apply", func() {
 
 	Context("Given a deployment with products", func() {
 		BeforeEach(func() {
-			fakeOpsman = &tilerfakes.FakeOpsmanClient{
-				DownloadProductStub: func(c DownloadProductArgs) error {
-					_, err := os.Create(filepath.Join(
-						c.OutputDirectory,
-						fmt.Sprintf("%s-%s.pivotal",
-							c.PivnetProductSlug,
-							c.PivnetProductVersion,
-						),
-					))
-					Expect(err).ToNot(HaveOccurred())
-					_, err = os.Create(filepath.Join(
-						c.OutputDirectory,
-						fmt.Sprintf("stemcell-%s.tgz",
-							c.StemcellIaas,
-						),
-					))
-					Expect(err).ToNot(HaveOccurred())
-					return nil
+			fakeOpsman = &tilerfakes.FakeOpsmanClient{}
+			fakeMover = &tilerfakes.FakeMover{
+				GetStub: func(f pattern.PivnetFile) (*os.File, error) {
+					return ioutil.TempFile("", f.Slug)
 				},
 			}
-
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
-			tiler, err := NewTiler(fakeOpsman, logger)
+			tiler, err := NewTiler(fakeOpsman, fakeMover, logger)
 			Expect(err).ToNot(HaveOccurred())
 			err = tiler.Apply(pattern.Template{
 				Manifest: "pattern.yml",
@@ -79,38 +64,46 @@ var _ = Describe("Apply", func() {
 		})
 
 		It("Downloads the tiles and stemcells from Pivotal Network", func() {
-			args := fakeOpsman.DownloadProductArgsForCall(0)
-			Expect(args.PivnetProductSlug).To(Equal("p-healthwatch"))
-			Expect(args.PivnetProductVersion).To(Equal("1.2.3"))
-			Expect(args.PivnetProductGlob).To(Equal("*.pivotal"))
-			Expect(args.StemcellIaas).To(Equal("vsphere"))
+			args := fakeMover.GetArgsForCall(0)
+			Expect(args.Slug).To(Equal("p-healthwatch"))
+			Expect(args.Version).To(Equal("1.2.3-build.1"))
+			Expect(args.Glob).To(Equal("*.pivotal"))
 
-			args = fakeOpsman.DownloadProductArgsForCall(1)
-			Expect(args.PivnetProductSlug).To(Equal("elastic-runtime"))
-			Expect(args.PivnetProductVersion).To(Equal("3.2.1"))
-			Expect(args.PivnetProductGlob).To(Equal("srt*.pivotal"))
-			Expect(args.StemcellIaas).To(Equal("gcp"))
+			args = fakeMover.GetArgsForCall(1)
+			Expect(args.Slug).To(Equal("stemcells-ubuntu-xenial"))
+			Expect(args.Version).To(Equal("170.38"))
+			Expect(args.Glob).To(Equal("*vsphere*.tgz"))
+
+			args = fakeMover.GetArgsForCall(2)
+			Expect(args.Slug).To(Equal("elastic-runtime"))
+			Expect(args.Version).To(Equal("3.2.1-build.3"))
+			Expect(args.Glob).To(Equal("srt*.pivotal"))
+
+			args = fakeMover.GetArgsForCall(3)
+			Expect(args.Slug).To(Equal("stemcells-ubuntu-trusty"))
+			Expect(args.Version).To(Equal("170.50"))
+			Expect(args.Glob).To(Equal("*gcp*.tgz"))
 		})
 
 		It("Uploads the tiles and stemcells to Ops Manager", func() {
-			Expect(fakeOpsman.UploadProductArgsForCall(0)).
-				To(HaveSuffix("p-healthwatch-1.2.3.pivotal"))
-			Expect(fakeOpsman.UploadStemcellArgsForCall(0)).
-				To(HaveSuffix("stemcell-vsphere.tgz"))
-			Expect(fakeOpsman.UploadProductArgsForCall(1)).
-				To(HaveSuffix("elastic-runtime-3.2.1.pivotal"))
-			Expect(fakeOpsman.UploadStemcellArgsForCall(1)).
-				To(HaveSuffix("stemcell-gcp.tgz"))
+			Expect(fakeOpsman.UploadProductArgsForCall(0).Name()).
+				To(ContainSubstring("p-healthwatch"))
+			Expect(fakeOpsman.UploadStemcellArgsForCall(0).Name()).
+				To(ContainSubstring("stemcells-ubuntu-xenial"))
+			Expect(fakeOpsman.UploadProductArgsForCall(1).Name()).
+				To(ContainSubstring("elastic-runtime"))
+			Expect(fakeOpsman.UploadStemcellArgsForCall(1).Name()).
+				To(ContainSubstring("stemcells-ubuntu-trusty"))
 		})
 
 		It("Stages the products", func() {
 			args := fakeOpsman.StageProductArgsForCall(0)
-			Expect(args.ProductName).To(Equal("p-healthwatch"))
-			Expect(args.ProductVersion).To(Equal("1.2.3-build.1"))
+			Expect(args.Name).To(Equal("p-healthwatch"))
+			Expect(args.Product.Version).To(Equal("1.2.3-build.1"))
 
 			args = fakeOpsman.StageProductArgsForCall(1)
-			Expect(args.ProductName).To(Equal("cf"))
-			Expect(args.ProductVersion).To(Equal("3.2.1-build.3"))
+			Expect(args.Name).To(Equal("cf"))
+			Expect(args.Product.Version).To(Equal("3.2.1-build.3"))
 		})
 
 		It("Configures the products", func() {

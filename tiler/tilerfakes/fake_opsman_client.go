@@ -2,8 +2,10 @@
 package tilerfakes
 
 import (
+	"os"
 	"sync"
 
+	"github.com/starkandwayne/om-tiler/pattern"
 	"github.com/starkandwayne/om-tiler/tiler"
 )
 
@@ -50,21 +52,23 @@ type FakeOpsmanClient struct {
 	configureProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	DownloadProductStub        func(tiler.DownloadProductArgs) error
-	downloadProductMutex       sync.RWMutex
-	downloadProductArgsForCall []struct {
-		arg1 tiler.DownloadProductArgs
+	FilesUploadedStub        func(pattern.Tile) (bool, error)
+	filesUploadedMutex       sync.RWMutex
+	filesUploadedArgsForCall []struct {
+		arg1 pattern.Tile
 	}
-	downloadProductReturns struct {
-		result1 error
+	filesUploadedReturns struct {
+		result1 bool
+		result2 error
 	}
-	downloadProductReturnsOnCall map[int]struct {
-		result1 error
+	filesUploadedReturnsOnCall map[int]struct {
+		result1 bool
+		result2 error
 	}
-	StageProductStub        func(tiler.StageProductArgs) error
+	StageProductStub        func(pattern.Tile) error
 	stageProductMutex       sync.RWMutex
 	stageProductArgsForCall []struct {
-		arg1 tiler.StageProductArgs
+		arg1 pattern.Tile
 	}
 	stageProductReturns struct {
 		result1 error
@@ -72,10 +76,10 @@ type FakeOpsmanClient struct {
 	stageProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UploadProductStub        func(string) error
+	UploadProductStub        func(*os.File) error
 	uploadProductMutex       sync.RWMutex
 	uploadProductArgsForCall []struct {
-		arg1 string
+		arg1 *os.File
 	}
 	uploadProductReturns struct {
 		result1 error
@@ -83,10 +87,10 @@ type FakeOpsmanClient struct {
 	uploadProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UploadStemcellStub        func(string) error
+	UploadStemcellStub        func(*os.File) error
 	uploadStemcellMutex       sync.RWMutex
 	uploadStemcellArgsForCall []struct {
-		arg1 string
+		arg1 *os.File
 	}
 	uploadStemcellReturns struct {
 		result1 error
@@ -332,71 +336,74 @@ func (fake *FakeOpsmanClient) ConfigureProductReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) DownloadProduct(arg1 tiler.DownloadProductArgs) error {
-	fake.downloadProductMutex.Lock()
-	ret, specificReturn := fake.downloadProductReturnsOnCall[len(fake.downloadProductArgsForCall)]
-	fake.downloadProductArgsForCall = append(fake.downloadProductArgsForCall, struct {
-		arg1 tiler.DownloadProductArgs
+func (fake *FakeOpsmanClient) FilesUploaded(arg1 pattern.Tile) (bool, error) {
+	fake.filesUploadedMutex.Lock()
+	ret, specificReturn := fake.filesUploadedReturnsOnCall[len(fake.filesUploadedArgsForCall)]
+	fake.filesUploadedArgsForCall = append(fake.filesUploadedArgsForCall, struct {
+		arg1 pattern.Tile
 	}{arg1})
-	fake.recordInvocation("DownloadProduct", []interface{}{arg1})
-	fake.downloadProductMutex.Unlock()
-	if fake.DownloadProductStub != nil {
-		return fake.DownloadProductStub(arg1)
+	fake.recordInvocation("FilesUploaded", []interface{}{arg1})
+	fake.filesUploadedMutex.Unlock()
+	if fake.FilesUploadedStub != nil {
+		return fake.FilesUploadedStub(arg1)
 	}
 	if specificReturn {
-		return ret.result1
+		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.downloadProductReturns
-	return fakeReturns.result1
+	fakeReturns := fake.filesUploadedReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeOpsmanClient) DownloadProductCallCount() int {
-	fake.downloadProductMutex.RLock()
-	defer fake.downloadProductMutex.RUnlock()
-	return len(fake.downloadProductArgsForCall)
+func (fake *FakeOpsmanClient) FilesUploadedCallCount() int {
+	fake.filesUploadedMutex.RLock()
+	defer fake.filesUploadedMutex.RUnlock()
+	return len(fake.filesUploadedArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) DownloadProductCalls(stub func(tiler.DownloadProductArgs) error) {
-	fake.downloadProductMutex.Lock()
-	defer fake.downloadProductMutex.Unlock()
-	fake.DownloadProductStub = stub
+func (fake *FakeOpsmanClient) FilesUploadedCalls(stub func(pattern.Tile) (bool, error)) {
+	fake.filesUploadedMutex.Lock()
+	defer fake.filesUploadedMutex.Unlock()
+	fake.FilesUploadedStub = stub
 }
 
-func (fake *FakeOpsmanClient) DownloadProductArgsForCall(i int) tiler.DownloadProductArgs {
-	fake.downloadProductMutex.RLock()
-	defer fake.downloadProductMutex.RUnlock()
-	argsForCall := fake.downloadProductArgsForCall[i]
+func (fake *FakeOpsmanClient) FilesUploadedArgsForCall(i int) pattern.Tile {
+	fake.filesUploadedMutex.RLock()
+	defer fake.filesUploadedMutex.RUnlock()
+	argsForCall := fake.filesUploadedArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeOpsmanClient) DownloadProductReturns(result1 error) {
-	fake.downloadProductMutex.Lock()
-	defer fake.downloadProductMutex.Unlock()
-	fake.DownloadProductStub = nil
-	fake.downloadProductReturns = struct {
-		result1 error
-	}{result1}
+func (fake *FakeOpsmanClient) FilesUploadedReturns(result1 bool, result2 error) {
+	fake.filesUploadedMutex.Lock()
+	defer fake.filesUploadedMutex.Unlock()
+	fake.FilesUploadedStub = nil
+	fake.filesUploadedReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
 }
 
-func (fake *FakeOpsmanClient) DownloadProductReturnsOnCall(i int, result1 error) {
-	fake.downloadProductMutex.Lock()
-	defer fake.downloadProductMutex.Unlock()
-	fake.DownloadProductStub = nil
-	if fake.downloadProductReturnsOnCall == nil {
-		fake.downloadProductReturnsOnCall = make(map[int]struct {
-			result1 error
+func (fake *FakeOpsmanClient) FilesUploadedReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.filesUploadedMutex.Lock()
+	defer fake.filesUploadedMutex.Unlock()
+	fake.FilesUploadedStub = nil
+	if fake.filesUploadedReturnsOnCall == nil {
+		fake.filesUploadedReturnsOnCall = make(map[int]struct {
+			result1 bool
+			result2 error
 		})
 	}
-	fake.downloadProductReturnsOnCall[i] = struct {
-		result1 error
-	}{result1}
+	fake.filesUploadedReturnsOnCall[i] = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
 }
 
-func (fake *FakeOpsmanClient) StageProduct(arg1 tiler.StageProductArgs) error {
+func (fake *FakeOpsmanClient) StageProduct(arg1 pattern.Tile) error {
 	fake.stageProductMutex.Lock()
 	ret, specificReturn := fake.stageProductReturnsOnCall[len(fake.stageProductArgsForCall)]
 	fake.stageProductArgsForCall = append(fake.stageProductArgsForCall, struct {
-		arg1 tiler.StageProductArgs
+		arg1 pattern.Tile
 	}{arg1})
 	fake.recordInvocation("StageProduct", []interface{}{arg1})
 	fake.stageProductMutex.Unlock()
@@ -416,13 +423,13 @@ func (fake *FakeOpsmanClient) StageProductCallCount() int {
 	return len(fake.stageProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) StageProductCalls(stub func(tiler.StageProductArgs) error) {
+func (fake *FakeOpsmanClient) StageProductCalls(stub func(pattern.Tile) error) {
 	fake.stageProductMutex.Lock()
 	defer fake.stageProductMutex.Unlock()
 	fake.StageProductStub = stub
 }
 
-func (fake *FakeOpsmanClient) StageProductArgsForCall(i int) tiler.StageProductArgs {
+func (fake *FakeOpsmanClient) StageProductArgsForCall(i int) pattern.Tile {
 	fake.stageProductMutex.RLock()
 	defer fake.stageProductMutex.RUnlock()
 	argsForCall := fake.stageProductArgsForCall[i]
@@ -452,11 +459,11 @@ func (fake *FakeOpsmanClient) StageProductReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) UploadProduct(arg1 string) error {
+func (fake *FakeOpsmanClient) UploadProduct(arg1 *os.File) error {
 	fake.uploadProductMutex.Lock()
 	ret, specificReturn := fake.uploadProductReturnsOnCall[len(fake.uploadProductArgsForCall)]
 	fake.uploadProductArgsForCall = append(fake.uploadProductArgsForCall, struct {
-		arg1 string
+		arg1 *os.File
 	}{arg1})
 	fake.recordInvocation("UploadProduct", []interface{}{arg1})
 	fake.uploadProductMutex.Unlock()
@@ -476,13 +483,13 @@ func (fake *FakeOpsmanClient) UploadProductCallCount() int {
 	return len(fake.uploadProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) UploadProductCalls(stub func(string) error) {
+func (fake *FakeOpsmanClient) UploadProductCalls(stub func(*os.File) error) {
 	fake.uploadProductMutex.Lock()
 	defer fake.uploadProductMutex.Unlock()
 	fake.UploadProductStub = stub
 }
 
-func (fake *FakeOpsmanClient) UploadProductArgsForCall(i int) string {
+func (fake *FakeOpsmanClient) UploadProductArgsForCall(i int) *os.File {
 	fake.uploadProductMutex.RLock()
 	defer fake.uploadProductMutex.RUnlock()
 	argsForCall := fake.uploadProductArgsForCall[i]
@@ -512,11 +519,11 @@ func (fake *FakeOpsmanClient) UploadProductReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) UploadStemcell(arg1 string) error {
+func (fake *FakeOpsmanClient) UploadStemcell(arg1 *os.File) error {
 	fake.uploadStemcellMutex.Lock()
 	ret, specificReturn := fake.uploadStemcellReturnsOnCall[len(fake.uploadStemcellArgsForCall)]
 	fake.uploadStemcellArgsForCall = append(fake.uploadStemcellArgsForCall, struct {
-		arg1 string
+		arg1 *os.File
 	}{arg1})
 	fake.recordInvocation("UploadStemcell", []interface{}{arg1})
 	fake.uploadStemcellMutex.Unlock()
@@ -536,13 +543,13 @@ func (fake *FakeOpsmanClient) UploadStemcellCallCount() int {
 	return len(fake.uploadStemcellArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) UploadStemcellCalls(stub func(string) error) {
+func (fake *FakeOpsmanClient) UploadStemcellCalls(stub func(*os.File) error) {
 	fake.uploadStemcellMutex.Lock()
 	defer fake.uploadStemcellMutex.Unlock()
 	fake.UploadStemcellStub = stub
 }
 
-func (fake *FakeOpsmanClient) UploadStemcellArgsForCall(i int) string {
+func (fake *FakeOpsmanClient) UploadStemcellArgsForCall(i int) *os.File {
 	fake.uploadStemcellMutex.RLock()
 	defer fake.uploadStemcellMutex.RUnlock()
 	argsForCall := fake.uploadStemcellArgsForCall[i]
@@ -583,8 +590,8 @@ func (fake *FakeOpsmanClient) Invocations() map[string][][]interface{} {
 	defer fake.configureDirectorMutex.RUnlock()
 	fake.configureProductMutex.RLock()
 	defer fake.configureProductMutex.RUnlock()
-	fake.downloadProductMutex.RLock()
-	defer fake.downloadProductMutex.RUnlock()
+	fake.filesUploadedMutex.RLock()
+	defer fake.filesUploadedMutex.RUnlock()
 	fake.stageProductMutex.RLock()
 	defer fake.stageProductMutex.RUnlock()
 	fake.uploadProductMutex.RLock()
