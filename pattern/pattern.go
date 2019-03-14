@@ -23,10 +23,16 @@ func NewPattern(t Template) (p Pattern, err error) {
 		return Pattern{}, err
 	}
 
+	if p.Director.Vars == nil {
+		p.Director.Vars = make(map[string]interface{})
+	}
 	mergeVars(p.Director.Vars, t.Vars)
 	p.Director.Store = t.Store
 
 	for i, _ := range p.Tiles {
+		if p.Tiles[i].Vars == nil {
+			p.Tiles[i].Vars = make(map[string]interface{})
+		}
 		mergeVars(p.Tiles[i].Vars, t.Vars)
 		p.Tiles[i].Store = t.Store
 	}
@@ -35,10 +41,6 @@ func NewPattern(t Template) (p Pattern, err error) {
 }
 
 func mergeVars(target map[string]interface{}, source map[string]interface{}) {
-	if target == nil {
-		target = source
-		return
-	}
 	for k, v := range source {
 		if _, ok := target[k]; !ok {
 			target[k] = v
@@ -60,7 +62,7 @@ func (p *Pattern) Validate(expectAllKeys bool) error {
 	for _, tile := range p.Tiles {
 		_, err = tile.ToTemplate().Evaluate(expectAllKeys)
 		if err != nil {
-			return fmt.Errorf("Tile %s interpolation error(s):\n%+v\n", err, tile.Name)
+			return fmt.Errorf("Tile %s interpolation error(s):\n%+v\n", tile.Name, err)
 		}
 	}
 

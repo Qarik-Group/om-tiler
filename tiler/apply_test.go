@@ -66,6 +66,7 @@ var _ = Describe("Apply", func() {
 					"iaas-configuration_project":   "example-project",
 					"iaas-configuration_name":      "bar",
 					"real-iaas-configuration_name": "foo",
+					"network_name":                 "network1",
 				},
 				Store: templateStore,
 			})
