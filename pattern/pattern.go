@@ -95,6 +95,7 @@ func (d *Director) ToTemplate() *Template {
 
 type Tile struct {
 	Name     string     `yaml:"name" validate:"required"`
+	Version  string     `yaml:"version" validate:"required"`
 	Product  PivnetFile `yaml:"product" validate:"required,dive"`
 	Stemcell PivnetFile `yaml:"stemcell" validate:"required,dive"`
 	Template `yaml:",inline"`

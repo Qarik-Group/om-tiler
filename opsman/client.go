@@ -112,7 +112,7 @@ func (c *Client) UploadStemcell(s *os.File) error {
 func (c *Client) StageProduct(t pattern.Tile) error {
 	args := []string{
 		fmt.Sprintf("--product-name=%s", t.Name),
-		fmt.Sprintf("--product-version=%s", t.Product.Version),
+		fmt.Sprintf("--product-version=%s", t.Version),
 	}
 	cmd := commands.NewStageProduct(c.api, c.log)
 	return cmd.Execute(args)

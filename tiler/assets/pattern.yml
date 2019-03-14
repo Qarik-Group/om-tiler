@@ -8,6 +8,7 @@ director:
     iaas-configuration_name: ((real-iaas-configuration_name))
 tiles:
 - name: p-healthwatch
+  version: 1.2.3
   product:
     product_slug: p-healthwatch
     file_version: 1.2.3-build.1
@@ -38,6 +39,7 @@ tiles:
     redis_elb_names: elb1
     healthwatch-forwarder_instances: 5
 - name: cf
+  version: 3.2.1
   product:
     product_slug: elastic-runtime
     file_version: 3.2.1-build.3
