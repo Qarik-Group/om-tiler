@@ -95,7 +95,8 @@ func (c *Client) AcceptEULA(f pattern.PivnetFile) error {
 
 func (c *Client) downloadFile(f pattern.PivnetFile, path string) (file *os.File, err error) {
 	if path == "" {
-		file, err = ioutil.TempFile("", "tile")
+		file, err = ioutil.TempFile("", f.Slug)
+		path = file.Name()
 	} else {
 		file, err = os.Create(path)
 	}
@@ -106,7 +107,7 @@ func (c *Client) downloadFile(f pattern.PivnetFile, path string) (file *os.File,
 	// Delete the file if we're returning an error
 	defer func() {
 		if err != nil {
-			os.Remove(file.Name())
+			os.Remove(path)
 		}
 	}()
 
