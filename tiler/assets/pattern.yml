@@ -8,14 +8,14 @@ director:
     iaas-configuration_name: ((real-iaas-configuration_name))
 tiles:
 - name: p-healthwatch
-  version: 1.2.3
+  version: 1.2.3-build.1
   product:
     product_slug: p-healthwatch
-    file_version: 1.2.3-build.1
+    release_version: 1.2.3
     file_glob: "*.pivotal"
   stemcell:
     product_slug: stemcells-ubuntu-xenial
-    file_version: 170.38
+    release_version: 170.38
     file_glob: "*vsphere*.tgz"
   manifest: tiles/p-healthwatch/product.yml
   ops_files:
@@ -42,10 +42,10 @@ tiles:
   version: 3.2.1
   product:
     product_slug: elastic-runtime
-    file_version: 3.2.1-build.3
+    release_version: 3.2.1
     file_glob: "srt*.pivotal"
   stemcell:
     product_slug: stemcells-ubuntu-trusty
-    file_version: "170.50"
+    release_version: "170.50"
     file_glob: "*gcp*.tgz"
   manifest: tiles/elastic-runtime/product.yml

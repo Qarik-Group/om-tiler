@@ -66,7 +66,7 @@ var _ = Describe("Apply", func() {
 		It("Downloads the tiles and stemcells from Pivotal Network", func() {
 			args := fakeMover.GetArgsForCall(0)
 			Expect(args.Slug).To(Equal("p-healthwatch"))
-			Expect(args.Version).To(Equal("1.2.3-build.1"))
+			Expect(args.Version).To(Equal("1.2.3"))
 			Expect(args.Glob).To(Equal("*.pivotal"))
 
 			args = fakeMover.GetArgsForCall(1)
@@ -76,7 +76,7 @@ var _ = Describe("Apply", func() {
 
 			args = fakeMover.GetArgsForCall(2)
 			Expect(args.Slug).To(Equal("elastic-runtime"))
-			Expect(args.Version).To(Equal("3.2.1-build.3"))
+			Expect(args.Version).To(Equal("3.2.1"))
 			Expect(args.Glob).To(Equal("srt*.pivotal"))
 
 			args = fakeMover.GetArgsForCall(3)
@@ -99,11 +99,11 @@ var _ = Describe("Apply", func() {
 		It("Stages the products", func() {
 			args := fakeOpsman.StageProductArgsForCall(0)
 			Expect(args.Name).To(Equal("p-healthwatch"))
-			Expect(args.Product.Version).To(Equal("1.2.3-build.1"))
+			Expect(args.Version).To(Equal("1.2.3-build.1"))
 
 			args = fakeOpsman.StageProductArgsForCall(1)
 			Expect(args.Name).To(Equal("cf"))
-			Expect(args.Product.Version).To(Equal("3.2.1-build.3"))
+			Expect(args.Version).To(Equal("3.2.1"))
 		})
 
 		It("Configures the products", func() {

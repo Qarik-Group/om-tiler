@@ -113,7 +113,7 @@ func (t *Tile) ToTemplate() *Template {
 
 type PivnetFile struct {
 	Slug    string `yaml:"product_slug" validate:"required"`
-	Version string `yaml:"file_version" validate:"required"`
+	Version string `yaml:"release_version" validate:"required"`
 	Glob    string `yaml:"file_glob" validate:"required"`
 }
 

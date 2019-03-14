@@ -53,9 +53,8 @@ var _ = Describe("Client", func() {
 
 	Describe("AcceptEULA", func() {
 		var (
-			productVersion    string
+			releaseVersion    string
 			productSlug       string
-			fileVersion       string
 			releaseID         int
 			releasesURL       string
 			EULAAcceptanceURL string
@@ -63,15 +62,14 @@ var _ = Describe("Client", func() {
 
 		BeforeEach(func() {
 			productSlug = "banana-slug"
-			productVersion = "3.2"
-			fileVersion = "3.2-build.1"
+			releaseVersion = "3.2"
 			releaseID = 42
 			releasesURL = fmt.Sprintf(apiPrefix+"/products/%s/releases", productSlug)
 			EULAAcceptanceURL = fmt.Sprintf(apiPrefix+"/products/%s/releases/%d/pivnet_resource_eula_acceptance", productSlug, releaseID)
 		})
 
 		It("accepts the EULA for a given release and product Version", func() {
-			response := fmt.Sprintf(`{"releases":[{"id":40,"version":"3.3.0"},{"id":%d,"version":"%s"}]}`, releaseID, productVersion)
+			response := fmt.Sprintf(`{"releases":[{"id":40,"version":"3.3.0"},{"id":%d,"version":"%s"}]}`, releaseID, releaseVersion)
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("GET", releasesURL),
@@ -93,7 +91,7 @@ var _ = Describe("Client", func() {
 
 			Expect(client.AcceptEULA(pattern.PivnetFile{
 				Slug:    productSlug,
-				Version: fileVersion,
+				Version: releaseVersion,
 				Glob:    "*.tgz",
 			})).To(Succeed())
 		})
