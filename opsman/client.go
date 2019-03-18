@@ -35,6 +35,7 @@ const (
 	connectTimeout     = time.Duration(5) * time.Second
 	requestTimeout     = time.Duration(1800) * time.Second
 	pollingIntervalSec = "10"
+	applySleepDuration = time.Duration(10) * time.Second
 )
 
 func NewClient(c Config, logger *log.Logger) (*Client, error) {
@@ -148,7 +149,10 @@ func (c *Client) ConfigureDirector(config []byte) error {
 }
 
 func (c *Client) ApplyChanges() error {
-	return nil
+	args := []string{"--skip-unchanged-products"}
+	logWriter := commands.NewLogWriter(os.Stdout)
+	cmd := commands.NewApplyChanges(c.api, c.api, logWriter, c.log, applySleepDuration)
+	return cmd.Execute(args)
 }
 
 func tmpConfigFile(config []byte) (string, error) {
