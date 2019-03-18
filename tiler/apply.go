@@ -57,6 +57,8 @@ func (c *Tiler) ensureFilesUploaded(t pattern.Tile) error {
 		return err
 	}
 	if ok {
+		c.logger.Printf("files for %s/%s already uploaded skipping download",
+			t.Name, t.Version)
 		return nil
 	}
 
