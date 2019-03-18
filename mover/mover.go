@@ -90,10 +90,11 @@ func (m *Mover) cachedFile(f pattern.PivnetFile) (bool, *os.File, error) {
 		return false, nil, nil
 	}
 
-	file, err := os.Open(files[0].Name())
+	filePath := filepath.Join(dir.Name(), files[0].Name())
+	file, err := os.Open(filePath)
 	if err != nil {
 		return false, nil, fmt.Errorf(
-			"opening cached file %s: %s", files[0].Name(), err)
+			"opening cached file %s: %s", filePath, err)
 	}
 
 	return true, file, nil
