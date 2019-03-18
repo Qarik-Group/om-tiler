@@ -19,7 +19,6 @@ type Mover struct {
 }
 
 func NewMover(c PivnetClient, cache string, l *log.Logger) (*Mover, error) {
-	l.SetPrefix(fmt.Sprintf("%s[OM Tile Mover] ", l.Prefix()))
 	if cache == "" {
 		cache = os.TempDir()
 	} else {
