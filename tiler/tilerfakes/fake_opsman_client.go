@@ -52,6 +52,16 @@ type FakeOpsmanClient struct {
 	configureProductReturnsOnCall map[int]struct {
 		result1 error
 	}
+	DeleteInstallationStub        func() error
+	deleteInstallationMutex       sync.RWMutex
+	deleteInstallationArgsForCall []struct {
+	}
+	deleteInstallationReturns struct {
+		result1 error
+	}
+	deleteInstallationReturnsOnCall map[int]struct {
+		result1 error
+	}
 	FilesUploadedStub        func(pattern.Tile) (bool, error)
 	filesUploadedMutex       sync.RWMutex
 	filesUploadedArgsForCall []struct {
@@ -336,6 +346,58 @@ func (fake *FakeOpsmanClient) ConfigureProductReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
+func (fake *FakeOpsmanClient) DeleteInstallation() error {
+	fake.deleteInstallationMutex.Lock()
+	ret, specificReturn := fake.deleteInstallationReturnsOnCall[len(fake.deleteInstallationArgsForCall)]
+	fake.deleteInstallationArgsForCall = append(fake.deleteInstallationArgsForCall, struct {
+	}{})
+	fake.recordInvocation("DeleteInstallation", []interface{}{})
+	fake.deleteInstallationMutex.Unlock()
+	if fake.DeleteInstallationStub != nil {
+		return fake.DeleteInstallationStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.deleteInstallationReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeOpsmanClient) DeleteInstallationCallCount() int {
+	fake.deleteInstallationMutex.RLock()
+	defer fake.deleteInstallationMutex.RUnlock()
+	return len(fake.deleteInstallationArgsForCall)
+}
+
+func (fake *FakeOpsmanClient) DeleteInstallationCalls(stub func() error) {
+	fake.deleteInstallationMutex.Lock()
+	defer fake.deleteInstallationMutex.Unlock()
+	fake.DeleteInstallationStub = stub
+}
+
+func (fake *FakeOpsmanClient) DeleteInstallationReturns(result1 error) {
+	fake.deleteInstallationMutex.Lock()
+	defer fake.deleteInstallationMutex.Unlock()
+	fake.DeleteInstallationStub = nil
+	fake.deleteInstallationReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeOpsmanClient) DeleteInstallationReturnsOnCall(i int, result1 error) {
+	fake.deleteInstallationMutex.Lock()
+	defer fake.deleteInstallationMutex.Unlock()
+	fake.DeleteInstallationStub = nil
+	if fake.deleteInstallationReturnsOnCall == nil {
+		fake.deleteInstallationReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.deleteInstallationReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeOpsmanClient) FilesUploaded(arg1 pattern.Tile) (bool, error) {
 	fake.filesUploadedMutex.Lock()
 	ret, specificReturn := fake.filesUploadedReturnsOnCall[len(fake.filesUploadedArgsForCall)]
@@ -590,6 +652,8 @@ func (fake *FakeOpsmanClient) Invocations() map[string][][]interface{} {
 	defer fake.configureDirectorMutex.RUnlock()
 	fake.configureProductMutex.RLock()
 	defer fake.configureProductMutex.RUnlock()
+	fake.deleteInstallationMutex.RLock()
+	defer fake.deleteInstallationMutex.RUnlock()
 	fake.filesUploadedMutex.RLock()
 	defer fake.filesUploadedMutex.RUnlock()
 	fake.stageProductMutex.RLock()

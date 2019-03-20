@@ -16,7 +16,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Apply", func() {
+var _ = Describe("Configure", func() {
 	var (
 		fakeOpsman *tilerfakes.FakeOpsmanClient
 		fakeMover  *tilerfakes.FakeMover
@@ -56,7 +56,7 @@ var _ = Describe("Apply", func() {
 				Store: templateStore,
 			})
 			Expect(err).ToNot(HaveOccurred())
-			err = tiler.Apply(p)
+			err = tiler.Configure(p)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
