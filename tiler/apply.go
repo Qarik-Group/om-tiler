@@ -7,17 +7,12 @@ import (
 	"github.com/starkandwayne/om-tiler/pattern"
 )
 
-func (c *Tiler) Apply(t pattern.Template) error {
-	p, err := pattern.NewPattern(t)
-	if err != nil {
+func (c *Tiler) Apply(p pattern.Pattern) error {
+	if err := p.Validate(true); err != nil {
 		return err
 	}
 
-	if err = p.Validate(true); err != nil {
-		return err
-	}
-
-	err = c.client.ConfigureAuthentication()
+	err := c.client.ConfigureAuthentication()
 	if err != nil {
 		return err
 	}

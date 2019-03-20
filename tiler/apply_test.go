@@ -45,7 +45,7 @@ var _ = Describe("Apply", func() {
 			templateStore := http.Dir(assetsDir())
 			tiler, err := NewTiler(fakeOpsman, fakeMover, logger)
 			Expect(err).ToNot(HaveOccurred())
-			err = tiler.Apply(pattern.Template{
+			p, err := pattern.NewPattern(pattern.Template{
 				Manifest: "pattern.yml",
 				Vars: map[string]interface{}{
 					"iaas-configuration_project":   "example-project",
@@ -55,6 +55,8 @@ var _ = Describe("Apply", func() {
 				},
 				Store: templateStore,
 			})
+			Expect(err).ToNot(HaveOccurred())
+			err = tiler.Apply(p)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
