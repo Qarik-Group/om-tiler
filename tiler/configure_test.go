@@ -54,7 +54,7 @@ var _ = Describe("Configure", func() {
 					"network_name":                 "network1",
 				},
 				Store: templateStore,
-			})
+			}, true)
 			Expect(err).ToNot(HaveOccurred())
 			err = tiler.Configure(p)
 			Expect(err).ToNot(HaveOccurred())
