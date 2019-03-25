@@ -26,7 +26,6 @@ type Config struct {
 	Host       string
 	Token      string
 	UserAgent  string
-	Logger     *log.Logger
 	AcceptEULA bool
 }
 
@@ -48,7 +47,7 @@ func NewClient(c Config, logger *log.Logger) *Client {
 	if c.Host == "" {
 		host = gopivnet.DefaultHost
 	}
-	log := logshim.NewLogShim(c.Logger, c.Logger, false)
+	log := logshim.NewLogShim(logger, logger, false)
 	client := gopivnet.NewClient(gopivnet.ClientConfig{
 		Host:      host,
 		Token:     c.Token,

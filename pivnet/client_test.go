@@ -42,7 +42,6 @@ var _ = Describe("Client", func() {
 			Host:       apiAddress,
 			Token:      token,
 			UserAgent:  userAgent,
-			Logger:     logger,
 			AcceptEULA: acceptEULA,
 		}, logger)
 	})
