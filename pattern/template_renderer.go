@@ -62,7 +62,7 @@ func (t *Template) Evaluate(expectAllKeys bool) ([]byte, error) {
 
 	logger := boshlog.NewLogger(boshlog.LevelError)
 	fs := boshsys.NewOsFileSystem(logger)
-	store := boshcmd.VarsFSStore{FS: fs}
+	store := &boshcmd.VarsFSStore{FS: fs}
 
 	if t.VarsStore != "" {
 		err := store.UnmarshalFlag(t.VarsStore)

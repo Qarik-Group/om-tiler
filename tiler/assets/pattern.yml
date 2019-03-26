@@ -49,8 +49,3 @@ tiles:
     release_version: "170.50"
     file_glob: "*gcp*.tgz"
   manifest: tiles/elastic-runtime/product.yml
-
-test: ((test-password))
-variables:
-- name: test-password
-  type: password

@@ -20,7 +20,8 @@ var _ = Describe("Configure", func() {
 	var (
 		fakeOpsman *tilerfakes.FakeOpsmanClient
 		fakeMover  *tilerfakes.FakeMover
-		varsStore  *os.File
+		varsStore  string
+		opsFiles   []string
 	)
 
 	assetsDir := func() string {
@@ -35,7 +36,7 @@ var _ = Describe("Configure", func() {
 	}
 
 	Context("Given a deployment with products", func() {
-		BeforeEach(func() {
+		JustBeforeEach(func() {
 			fakeOpsman = &tilerfakes.FakeOpsmanClient{}
 			fakeMover = &tilerfakes.FakeMover{
 				GetStub: func(f pattern.PivnetFile) (*os.File, error) {
@@ -46,8 +47,6 @@ var _ = Describe("Configure", func() {
 			templateStore := http.Dir(assetsDir())
 			tiler, err := NewTiler(fakeOpsman, fakeMover, logger)
 			Expect(err).ToNot(HaveOccurred())
-			varsStore, err = ioutil.TempFile("", "varsStore")
-			Expect(err).ToNot(HaveOccurred())
 			p, err := pattern.NewPattern(pattern.Template{
 				Manifest: "pattern.yml",
 				Vars: map[string]interface{}{
@@ -56,15 +55,12 @@ var _ = Describe("Configure", func() {
 					"real-iaas-configuration_name": "foo",
 					"network_name":                 "network1",
 				},
-				Store: templateStore,
-			}, varsStore.Name(), true)
+				OpsFiles: opsFiles,
+				Store:    templateStore,
+			}, varsStore, true)
 			Expect(err).ToNot(HaveOccurred())
 			err = tiler.Configure(p)
 			Expect(err).ToNot(HaveOccurred())
-		})
-
-		AfterEach(func() {
-			os.Remove(varsStore.Name())
 		})
 
 		It("Configures the director", func() {
@@ -120,9 +116,23 @@ var _ = Describe("Configure", func() {
 			Expect(config).To(MatchYAML(readAsset("results/p-healthwatch.yml")))
 		})
 
-		It("Generates secretes", func() {
-			Expect(ioutil.ReadAll(varsStore)).To(ContainSubstring("test-password"))
+		Context("Given a varsStore", func() {
+			BeforeEach(func() {
+				f, err := ioutil.TempFile("", "varsStore")
+				Expect(err).ToNot(HaveOccurred())
+				varsStore = f.Name()
+				opsFiles = []string{"secrets.yml"}
+			})
+			AfterEach(func() {
+				os.Remove(varsStore)
+			})
+
+			It("Generates secretes", func() {
+				Expect(ioutil.ReadFile(varsStore)).To(ContainSubstring("test_password"))
+				Expect(ioutil.ReadFile(varsStore)).To(ContainSubstring("test_cert"))
+			})
 		})
+
 	})
 
 })
