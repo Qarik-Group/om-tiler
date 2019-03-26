@@ -20,6 +20,7 @@ var _ = Describe("Configure", func() {
 	var (
 		fakeOpsman *tilerfakes.FakeOpsmanClient
 		fakeMover  *tilerfakes.FakeMover
+		varsStore  *os.File
 	)
 
 	assetsDir := func() string {
@@ -45,6 +46,8 @@ var _ = Describe("Configure", func() {
 			templateStore := http.Dir(assetsDir())
 			tiler, err := NewTiler(fakeOpsman, fakeMover, logger)
 			Expect(err).ToNot(HaveOccurred())
+			varsStore, err = ioutil.TempFile("", "varsStore")
+			Expect(err).ToNot(HaveOccurred())
 			p, err := pattern.NewPattern(pattern.Template{
 				Manifest: "pattern.yml",
 				Vars: map[string]interface{}{
@@ -54,10 +57,14 @@ var _ = Describe("Configure", func() {
 					"network_name":                 "network1",
 				},
 				Store: templateStore,
-			}, true)
+			}, varsStore.Name(), true)
 			Expect(err).ToNot(HaveOccurred())
 			err = tiler.Configure(p)
 			Expect(err).ToNot(HaveOccurred())
+		})
+
+		AfterEach(func() {
+			os.Remove(varsStore.Name())
 		})
 
 		It("Configures the director", func() {
@@ -111,6 +118,10 @@ var _ = Describe("Configure", func() {
 		It("Configures the products", func() {
 			config := fakeOpsman.ConfigureProductArgsForCall(0)
 			Expect(config).To(MatchYAML(readAsset("results/p-healthwatch.yml")))
+		})
+
+		It("Generates secretes", func() {
+			Expect(ioutil.ReadAll(varsStore)).To(ContainSubstring("test-password"))
 		})
 	})
 
