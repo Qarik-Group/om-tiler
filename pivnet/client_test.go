@@ -36,7 +36,9 @@ var _ = Describe("Client", func() {
 		apiAddress = server.URL()
 		apiPrefix = "/api/v2"
 		token = "my-auth-token"
-		userAgent = "pivnet-resource/0.1.0 (some-url)"
+	})
+
+	JustBeforeEach(func() {
 		logger := log.New(GinkgoWriter, "", 0)
 		client = NewClient(Config{
 			Host:       apiAddress,
@@ -59,15 +61,7 @@ var _ = Describe("Client", func() {
 			EULAAcceptanceURL string
 		)
 
-		BeforeEach(func() {
-			productSlug = "banana-slug"
-			releaseVersion = "3.2"
-			releaseID = 42
-			releasesURL = fmt.Sprintf(apiPrefix+"/products/%s/releases", productSlug)
-			EULAAcceptanceURL = fmt.Sprintf(apiPrefix+"/products/%s/releases/%d/pivnet_resource_eula_acceptance", productSlug, releaseID)
-		})
-
-		It("accepts the EULA for a given release and product Version", func() {
+		JustBeforeEach(func() {
 			response := fmt.Sprintf(`{"releases":[{"id":40,"version":"3.3.0"},{"id":%d,"version":"%s"}]}`, releaseID, releaseVersion)
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
@@ -78,22 +72,60 @@ var _ = Describe("Client", func() {
 			)
 
 			response = fmt.Sprintf(`{"accepted_at": "2016-01-11","_links":{}}`)
+			handlers := []http.HandlerFunc{
+				ghttp.VerifyRequest("POST", EULAAcceptanceURL),
+				ghttp.VerifyHeaderKV("Authorization", fmt.Sprintf("Token %s", token)),
+				ghttp.VerifyJSON(`{}`),
+				ghttp.RespondWith(http.StatusOK, response),
+			}
+			if userAgent != "" {
+				handlers = append(handlers, ghttp.VerifyHeaderKV("User-Agent", userAgent))
+			}
 			server.AppendHandlers(
-				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("POST", EULAAcceptanceURL),
-					ghttp.VerifyHeaderKV("Authorization", fmt.Sprintf("Token %s", token)),
-					ghttp.VerifyHeaderKV("User-Agent", userAgent),
-					ghttp.VerifyJSON(`{}`),
-					ghttp.RespondWith(http.StatusOK, response),
-				),
+				ghttp.CombineHandlers(handlers...),
 			)
 
-			Expect(client.AcceptEULA(pattern.PivnetFile{
-				Slug:    productSlug,
-				Version: releaseVersion,
-				Glob:    "*.tgz",
-			})).To(Succeed())
 		})
+
+		Context("given a normal user who needs to accept manually", func() {
+			BeforeEach(func() {
+				productSlug = "banana-slug"
+				releaseVersion = "3.2"
+				releaseID = 42
+				releasesURL = fmt.Sprintf(apiPrefix+"/products/%s/releases", productSlug)
+				EULAAcceptanceURL = fmt.Sprintf(apiPrefix+"/products/%s/releases/%d/pivnet_resource_eula_acceptance", productSlug, releaseID)
+			})
+
+			It("accepts the EULA for a given release and product Version", func() {
+
+				Expect(client.AcceptEULA(pattern.PivnetFile{
+					Slug:    productSlug,
+					Version: releaseVersion,
+					Glob:    "*.tgz",
+				})).To(Succeed())
+			})
+		})
+
+		Context("given an agent which is allowed to accept EULA's automatically", func() {
+			BeforeEach(func() {
+				productSlug = "banana-slug"
+				releaseVersion = "3.2"
+				releaseID = 42
+				releasesURL = fmt.Sprintf(apiPrefix+"/products/%s/releases", productSlug)
+				EULAAcceptanceURL = fmt.Sprintf(apiPrefix+"/products/%s/releases/%d/eula_acceptance", productSlug, releaseID)
+				userAgent = "special client"
+				acceptEULA = true
+			})
+
+			It("accepts the EULA for a given release and product Version", func() {
+				Expect(client.AcceptEULA(pattern.PivnetFile{
+					Slug:    productSlug,
+					Version: releaseVersion,
+					Glob:    "*.tgz",
+				})).To(Succeed())
+			})
+		})
+
 	})
 
 })
