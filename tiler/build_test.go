@@ -118,7 +118,7 @@ var _ = Describe("Build", func() {
 		})
 
 		It("Applies the changes", func() {
-			Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(1))
+			Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(2))
 		})
 
 		Context("When skipApplyChanges has been set", func() {

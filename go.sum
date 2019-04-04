@@ -135,6 +135,8 @@ github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht
 github.com/jtarchie/stow v0.0.0-20190209005554-0bff39424d5b h1:oFdyQxhOCt8vTbFODgs125voMAnIEGViybwyk4VhS04=
 github.com/jtarchie/stow v0.0.0-20190209005554-0bff39424d5b/go.mod h1:uisJIFZbt/9AC5BikEtFRWZdG/tSBEEqK/Uf/ZJhzIc=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
+github.com/kamildrazkiewicz/go-flow v0.0.0-20170919072006-2a1d885f8ce4 h1:GgT8WeYYV7PhP4bLtGerw2LOEl/lZjwj3Qx3vnCFQGg=
+github.com/kamildrazkiewicz/go-flow v0.0.0-20170919072006-2a1d885f8ce4/go.mod h1:AOdjNPwolCeK0trxWOXcm8D2m1jCi+cP6eTTxQEqvOg=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=

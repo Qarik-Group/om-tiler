@@ -194,6 +194,8 @@ github.com/hpcloud/tail/winfile
 github.com/jessevdk/go-flags
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
+# github.com/kamildrazkiewicz/go-flow v0.0.0-20170919072006-2a1d885f8ce4
+github.com/kamildrazkiewicz/go-flow
 # github.com/leodido/go-urn v1.1.0
 github.com/leodido/go-urn
 # github.com/mattn/go-colorable v0.1.1

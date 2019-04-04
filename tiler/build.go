@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	goflow "github.com/kamildrazkiewicz/go-flow"
 	"github.com/starkandwayne/om-tiler/pattern"
 )
 
@@ -12,36 +13,69 @@ func (c *Tiler) Build(p pattern.Pattern, skipApplyChanges bool) error {
 		return err
 	}
 
-	err := c.client.ConfigureAuthentication()
-	if err != nil {
-		return err
-	}
-
-	err = c.configureDirector(p.Director)
-	if err != nil {
-		return err
-	}
-
-	for _, tile := range p.Tiles {
-		if err = c.ensureFilesUploaded(tile); err != nil {
-			return err
-		}
-
-		err = c.client.StageProduct(tile)
+	configureAuthentication := func(r map[string]interface{}) (interface{}, error) {
+		err := c.client.ConfigureAuthentication()
 		if err != nil {
-			return err
+			return nil, err
 		}
+		return nil, nil
+	}
 
-		err = c.configureProduct(tile)
+	configureDirector := func(r map[string]interface{}) (interface{}, error) {
+		err := c.configureDirector(p.Director)
 		if err != nil {
-			return err
+			return nil, err
 		}
+
+		if !skipApplyChanges {
+			err = c.client.ApplyChanges()
+			if err != nil {
+				return nil, err
+			}
+		}
+		return nil, nil
 	}
 
-	if !skipApplyChanges {
-		return c.client.ApplyChanges()
+	ensureFilesUploaded := func(r map[string]interface{}) (interface{}, error) {
+		for _, tile := range p.Tiles {
+			if err := c.ensureFilesUploaded(tile); err != nil {
+				return nil, err
+			}
+		}
+		return nil, nil
 	}
-	return nil
+
+	configureTiles := func(r map[string]interface{}) (interface{}, error) {
+		for _, tile := range p.Tiles {
+			err := c.client.StageProduct(tile)
+			if err != nil {
+				return nil, err
+			}
+
+			err = c.configureProduct(tile)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if !skipApplyChanges {
+			err := c.client.ApplyChanges()
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		return nil, nil
+	}
+
+	_, err := goflow.New().
+		Add("configureAuthentication", nil, configureAuthentication).
+		Add("configureDirector", []string{"configureAuthentication"}, configureDirector).
+		Add("ensureFilesUploaded", []string{"configureAuthentication"}, ensureFilesUploaded).
+		Add("configureTiles", []string{"configureDirector", "ensureFilesUploaded"}, configureTiles).
+		Do()
+
+	return err
 }
 
 func (c *Tiler) ensureFilesUploaded(t pattern.Tile) error {

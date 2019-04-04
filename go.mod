@@ -29,6 +29,7 @@ require (
 	github.com/gosuri/uilive v0.0.0-20170323041506-ac356e6e42cd
 	github.com/hashicorp/go-multierror v1.0.0 // indirect
 	github.com/jessevdk/go-flags v1.4.0 // indirect
+	github.com/kamildrazkiewicz/go-flow v0.0.0-20170919072006-2a1d885f8ce4
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.6 // indirect
 	github.com/mattn/go-runewidth v0.0.4 // indirect
