@@ -7,7 +7,7 @@ import (
 	"github.com/starkandwayne/om-tiler/pattern"
 )
 
-func (c *Tiler) Configure(p pattern.Pattern) error {
+func (c *Tiler) Build(p pattern.Pattern, skipApplyChanges bool) error {
 	if err := p.Validate(true); err != nil {
 		return err
 	}
@@ -38,6 +38,9 @@ func (c *Tiler) Configure(p pattern.Pattern) error {
 		}
 	}
 
+	if !skipApplyChanges {
+		return c.client.ApplyChanges()
+	}
 	return nil
 }
 

@@ -16,12 +16,13 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Configure", func() {
+var _ = Describe("Build", func() {
 	var (
-		fakeOpsman *tilerfakes.FakeOpsmanClient
-		fakeMover  *tilerfakes.FakeMover
-		varsStore  string
-		opsFiles   []string
+		fakeOpsman       *tilerfakes.FakeOpsmanClient
+		fakeMover        *tilerfakes.FakeMover
+		skipApplyChanges bool
+		varsStore        string
+		opsFiles         []string
 	)
 
 	assetsDir := func() string {
@@ -59,7 +60,7 @@ var _ = Describe("Configure", func() {
 				Store:    templateStore,
 			}, varsStore, true)
 			Expect(err).ToNot(HaveOccurred())
-			err = tiler.Configure(p)
+			err = tiler.Build(p, skipApplyChanges)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -114,6 +115,20 @@ var _ = Describe("Configure", func() {
 		It("Configures the products", func() {
 			config := fakeOpsman.ConfigureProductArgsForCall(0)
 			Expect(config).To(MatchYAML(readAsset("results/p-healthwatch.yml")))
+		})
+
+		It("Applies the changes", func() {
+			Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(1))
+		})
+
+		Context("When skipApplyChanges has been set", func() {
+			BeforeEach(func() {
+				skipApplyChanges = true
+			})
+
+			It("Does not apply changes", func() {
+				Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(0))
+			})
 		})
 
 		Context("Given a varsStore", func() {
