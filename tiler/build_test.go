@@ -1,6 +1,7 @@
 package tiler_test
 
 import (
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -23,6 +24,7 @@ var _ = Describe("Build", func() {
 		skipApplyChanges bool
 		varsStore        string
 		opsFiles         []string
+		buildErr         error
 	)
 
 	assetsDir := func() string {
@@ -37,13 +39,16 @@ var _ = Describe("Build", func() {
 	}
 
 	Context("Given a deployment with products", func() {
-		JustBeforeEach(func() {
+		BeforeEach(func() {
 			fakeOpsman = &tilerfakes.FakeOpsmanClient{}
 			fakeMover = &tilerfakes.FakeMover{
 				GetStub: func(f pattern.PivnetFile) (*os.File, error) {
 					return ioutil.TempFile("", f.Slug)
 				},
 			}
+		})
+
+		JustBeforeEach(func() {
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
 			tiler, err := NewTiler(fakeOpsman, fakeMover, logger)
@@ -60,16 +65,17 @@ var _ = Describe("Build", func() {
 				Store:    templateStore,
 			}, varsStore, true)
 			Expect(err).ToNot(HaveOccurred())
-			err = tiler.Build(p, skipApplyChanges)
-			Expect(err).ToNot(HaveOccurred())
+			buildErr = tiler.Build(p, skipApplyChanges)
 		})
 
 		It("Configures the director", func() {
+			Expect(buildErr).ToNot(HaveOccurred())
 			config := fakeOpsman.ConfigureDirectorArgsForCall(0)
 			Expect(config).To(MatchYAML(readAsset("results/director-config.yml")))
 		})
 
 		It("Downloads the tiles and stemcells from Pivotal Network", func() {
+			Expect(buildErr).ToNot(HaveOccurred())
 			args := fakeMover.GetArgsForCall(0)
 			Expect(args.Slug).To(Equal("p-healthwatch"))
 			Expect(args.Version).To(Equal("1.2.3"))
@@ -92,6 +98,7 @@ var _ = Describe("Build", func() {
 		})
 
 		It("Uploads the tiles and stemcells to Ops Manager", func() {
+			Expect(buildErr).ToNot(HaveOccurred())
 			Expect(fakeOpsman.UploadProductArgsForCall(0).Name()).
 				To(ContainSubstring("p-healthwatch"))
 			Expect(fakeOpsman.UploadStemcellArgsForCall(0).Name()).
@@ -103,6 +110,7 @@ var _ = Describe("Build", func() {
 		})
 
 		It("Stages the products", func() {
+			Expect(buildErr).ToNot(HaveOccurred())
 			args := fakeOpsman.StageProductArgsForCall(0)
 			Expect(args.Name).To(Equal("p-healthwatch"))
 			Expect(args.Version).To(Equal("1.2.3-build.1"))
@@ -113,11 +121,13 @@ var _ = Describe("Build", func() {
 		})
 
 		It("Configures the products", func() {
+			Expect(buildErr).ToNot(HaveOccurred())
 			config := fakeOpsman.ConfigureProductArgsForCall(0)
 			Expect(config).To(MatchYAML(readAsset("results/p-healthwatch.yml")))
 		})
 
 		It("Applies the changes", func() {
+			Expect(buildErr).ToNot(HaveOccurred())
 			Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(2))
 		})
 
@@ -127,7 +137,22 @@ var _ = Describe("Build", func() {
 			})
 
 			It("Does not apply changes", func() {
+				Expect(buildErr).ToNot(HaveOccurred())
 				Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(0))
+			})
+		})
+
+		Context("When configuring the director fails", func() {
+			configureError := errors.New("changes are being applied")
+			BeforeEach(func() {
+				fakeOpsman.ConfigureDirectorReturns(configureError)
+			})
+
+			It("Finishes uploading releases", func() {
+				Expect(buildErr).To(Equal(configureError))
+				Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(0))
+				Expect(fakeOpsman.UploadProductCallCount()).To(Equal(2))
+				Expect(fakeOpsman.ConfigureProductCallCount()).To(Equal(0))
 			})
 		})
 
