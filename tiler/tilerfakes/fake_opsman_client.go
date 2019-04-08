@@ -75,6 +75,16 @@ type FakeOpsmanClient struct {
 		result1 bool
 		result2 error
 	}
+	PollTillOnlineStub        func() error
+	pollTillOnlineMutex       sync.RWMutex
+	pollTillOnlineArgsForCall []struct {
+	}
+	pollTillOnlineReturns struct {
+		result1 error
+	}
+	pollTillOnlineReturnsOnCall map[int]struct {
+		result1 error
+	}
 	StageProductStub        func(pattern.Tile) error
 	stageProductMutex       sync.RWMutex
 	stageProductArgsForCall []struct {
@@ -461,6 +471,58 @@ func (fake *FakeOpsmanClient) FilesUploadedReturnsOnCall(i int, result1 bool, re
 	}{result1, result2}
 }
 
+func (fake *FakeOpsmanClient) PollTillOnline() error {
+	fake.pollTillOnlineMutex.Lock()
+	ret, specificReturn := fake.pollTillOnlineReturnsOnCall[len(fake.pollTillOnlineArgsForCall)]
+	fake.pollTillOnlineArgsForCall = append(fake.pollTillOnlineArgsForCall, struct {
+	}{})
+	fake.recordInvocation("PollTillOnline", []interface{}{})
+	fake.pollTillOnlineMutex.Unlock()
+	if fake.PollTillOnlineStub != nil {
+		return fake.PollTillOnlineStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.pollTillOnlineReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeOpsmanClient) PollTillOnlineCallCount() int {
+	fake.pollTillOnlineMutex.RLock()
+	defer fake.pollTillOnlineMutex.RUnlock()
+	return len(fake.pollTillOnlineArgsForCall)
+}
+
+func (fake *FakeOpsmanClient) PollTillOnlineCalls(stub func() error) {
+	fake.pollTillOnlineMutex.Lock()
+	defer fake.pollTillOnlineMutex.Unlock()
+	fake.PollTillOnlineStub = stub
+}
+
+func (fake *FakeOpsmanClient) PollTillOnlineReturns(result1 error) {
+	fake.pollTillOnlineMutex.Lock()
+	defer fake.pollTillOnlineMutex.Unlock()
+	fake.PollTillOnlineStub = nil
+	fake.pollTillOnlineReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeOpsmanClient) PollTillOnlineReturnsOnCall(i int, result1 error) {
+	fake.pollTillOnlineMutex.Lock()
+	defer fake.pollTillOnlineMutex.Unlock()
+	fake.PollTillOnlineStub = nil
+	if fake.pollTillOnlineReturnsOnCall == nil {
+		fake.pollTillOnlineReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.pollTillOnlineReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeOpsmanClient) StageProduct(arg1 pattern.Tile) error {
 	fake.stageProductMutex.Lock()
 	ret, specificReturn := fake.stageProductReturnsOnCall[len(fake.stageProductArgsForCall)]
@@ -656,6 +718,8 @@ func (fake *FakeOpsmanClient) Invocations() map[string][][]interface{} {
 	defer fake.deleteInstallationMutex.RUnlock()
 	fake.filesUploadedMutex.RLock()
 	defer fake.filesUploadedMutex.RUnlock()
+	fake.pollTillOnlineMutex.RLock()
+	defer fake.pollTillOnlineMutex.RUnlock()
 	fake.stageProductMutex.RLock()
 	defer fake.stageProductMutex.RUnlock()
 	fake.uploadProductMutex.RLock()

@@ -13,6 +13,14 @@ func (c *Tiler) Build(p pattern.Pattern, skipApplyChanges bool) error {
 		return err
 	}
 
+	pollTillOnline := func(r map[string]interface{}) (interface{}, error) {
+		err := c.client.PollTillOnline()
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+
 	configureAuthentication := func(r map[string]interface{}) (interface{}, error) {
 		err := c.client.ConfigureAuthentication()
 		if err != nil {
@@ -69,7 +77,8 @@ func (c *Tiler) Build(p pattern.Pattern, skipApplyChanges bool) error {
 	}
 
 	_, err := goflow.New().
-		Add("configureAuthentication", nil, configureAuthentication).
+		Add("pollTillOnline", nil, pollTillOnline).
+		Add("configureAuthentication", []string{"pollTillOnline"}, configureAuthentication).
 		Add("configureDirector", []string{"configureAuthentication"}, configureDirector).
 		Add("ensureFilesUploaded", []string{"configureAuthentication"}, ensureFilesUploaded).
 		Add("configureTiles", []string{"configureDirector", "ensureFilesUploaded"}, configureTiles).
