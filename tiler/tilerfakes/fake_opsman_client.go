@@ -2,6 +2,7 @@
 package tilerfakes
 
 import (
+	"context"
 	"os"
 	"sync"
 
@@ -10,9 +11,10 @@ import (
 )
 
 type FakeOpsmanClient struct {
-	ApplyChangesStub        func() error
+	ApplyChangesStub        func(context.Context) error
 	applyChangesMutex       sync.RWMutex
 	applyChangesArgsForCall []struct {
+		arg1 context.Context
 	}
 	applyChangesReturns struct {
 		result1 error
@@ -20,9 +22,10 @@ type FakeOpsmanClient struct {
 	applyChangesReturnsOnCall map[int]struct {
 		result1 error
 	}
-	ConfigureAuthenticationStub        func() error
+	ConfigureAuthenticationStub        func(context.Context) error
 	configureAuthenticationMutex       sync.RWMutex
 	configureAuthenticationArgsForCall []struct {
+		arg1 context.Context
 	}
 	configureAuthenticationReturns struct {
 		result1 error
@@ -30,10 +33,11 @@ type FakeOpsmanClient struct {
 	configureAuthenticationReturnsOnCall map[int]struct {
 		result1 error
 	}
-	ConfigureDirectorStub        func([]byte) error
+	ConfigureDirectorStub        func(context.Context, []byte) error
 	configureDirectorMutex       sync.RWMutex
 	configureDirectorArgsForCall []struct {
-		arg1 []byte
+		arg1 context.Context
+		arg2 []byte
 	}
 	configureDirectorReturns struct {
 		result1 error
@@ -41,10 +45,11 @@ type FakeOpsmanClient struct {
 	configureDirectorReturnsOnCall map[int]struct {
 		result1 error
 	}
-	ConfigureProductStub        func([]byte) error
+	ConfigureProductStub        func(context.Context, []byte) error
 	configureProductMutex       sync.RWMutex
 	configureProductArgsForCall []struct {
-		arg1 []byte
+		arg1 context.Context
+		arg2 []byte
 	}
 	configureProductReturns struct {
 		result1 error
@@ -52,9 +57,10 @@ type FakeOpsmanClient struct {
 	configureProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	DeleteInstallationStub        func() error
+	DeleteInstallationStub        func(context.Context) error
 	deleteInstallationMutex       sync.RWMutex
 	deleteInstallationArgsForCall []struct {
+		arg1 context.Context
 	}
 	deleteInstallationReturns struct {
 		result1 error
@@ -62,10 +68,11 @@ type FakeOpsmanClient struct {
 	deleteInstallationReturnsOnCall map[int]struct {
 		result1 error
 	}
-	FilesUploadedStub        func(pattern.Tile) (bool, error)
+	FilesUploadedStub        func(context.Context, pattern.Tile) (bool, error)
 	filesUploadedMutex       sync.RWMutex
 	filesUploadedArgsForCall []struct {
-		arg1 pattern.Tile
+		arg1 context.Context
+		arg2 pattern.Tile
 	}
 	filesUploadedReturns struct {
 		result1 bool
@@ -75,9 +82,10 @@ type FakeOpsmanClient struct {
 		result1 bool
 		result2 error
 	}
-	PollTillOnlineStub        func() error
+	PollTillOnlineStub        func(context.Context) error
 	pollTillOnlineMutex       sync.RWMutex
 	pollTillOnlineArgsForCall []struct {
+		arg1 context.Context
 	}
 	pollTillOnlineReturns struct {
 		result1 error
@@ -85,10 +93,11 @@ type FakeOpsmanClient struct {
 	pollTillOnlineReturnsOnCall map[int]struct {
 		result1 error
 	}
-	StageProductStub        func(pattern.Tile) error
+	StageProductStub        func(context.Context, pattern.Tile) error
 	stageProductMutex       sync.RWMutex
 	stageProductArgsForCall []struct {
-		arg1 pattern.Tile
+		arg1 context.Context
+		arg2 pattern.Tile
 	}
 	stageProductReturns struct {
 		result1 error
@@ -96,10 +105,11 @@ type FakeOpsmanClient struct {
 	stageProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UploadProductStub        func(*os.File) error
+	UploadProductStub        func(context.Context, *os.File) error
 	uploadProductMutex       sync.RWMutex
 	uploadProductArgsForCall []struct {
-		arg1 *os.File
+		arg1 context.Context
+		arg2 *os.File
 	}
 	uploadProductReturns struct {
 		result1 error
@@ -107,10 +117,11 @@ type FakeOpsmanClient struct {
 	uploadProductReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UploadStemcellStub        func(*os.File) error
+	UploadStemcellStub        func(context.Context, *os.File) error
 	uploadStemcellMutex       sync.RWMutex
 	uploadStemcellArgsForCall []struct {
-		arg1 *os.File
+		arg1 context.Context
+		arg2 *os.File
 	}
 	uploadStemcellReturns struct {
 		result1 error
@@ -122,15 +133,16 @@ type FakeOpsmanClient struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeOpsmanClient) ApplyChanges() error {
+func (fake *FakeOpsmanClient) ApplyChanges(arg1 context.Context) error {
 	fake.applyChangesMutex.Lock()
 	ret, specificReturn := fake.applyChangesReturnsOnCall[len(fake.applyChangesArgsForCall)]
 	fake.applyChangesArgsForCall = append(fake.applyChangesArgsForCall, struct {
-	}{})
-	fake.recordInvocation("ApplyChanges", []interface{}{})
+		arg1 context.Context
+	}{arg1})
+	fake.recordInvocation("ApplyChanges", []interface{}{arg1})
 	fake.applyChangesMutex.Unlock()
 	if fake.ApplyChangesStub != nil {
-		return fake.ApplyChangesStub()
+		return fake.ApplyChangesStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
@@ -145,10 +157,17 @@ func (fake *FakeOpsmanClient) ApplyChangesCallCount() int {
 	return len(fake.applyChangesArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) ApplyChangesCalls(stub func() error) {
+func (fake *FakeOpsmanClient) ApplyChangesCalls(stub func(context.Context) error) {
 	fake.applyChangesMutex.Lock()
 	defer fake.applyChangesMutex.Unlock()
 	fake.ApplyChangesStub = stub
+}
+
+func (fake *FakeOpsmanClient) ApplyChangesArgsForCall(i int) context.Context {
+	fake.applyChangesMutex.RLock()
+	defer fake.applyChangesMutex.RUnlock()
+	argsForCall := fake.applyChangesArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeOpsmanClient) ApplyChangesReturns(result1 error) {
@@ -174,15 +193,16 @@ func (fake *FakeOpsmanClient) ApplyChangesReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) ConfigureAuthentication() error {
+func (fake *FakeOpsmanClient) ConfigureAuthentication(arg1 context.Context) error {
 	fake.configureAuthenticationMutex.Lock()
 	ret, specificReturn := fake.configureAuthenticationReturnsOnCall[len(fake.configureAuthenticationArgsForCall)]
 	fake.configureAuthenticationArgsForCall = append(fake.configureAuthenticationArgsForCall, struct {
-	}{})
-	fake.recordInvocation("ConfigureAuthentication", []interface{}{})
+		arg1 context.Context
+	}{arg1})
+	fake.recordInvocation("ConfigureAuthentication", []interface{}{arg1})
 	fake.configureAuthenticationMutex.Unlock()
 	if fake.ConfigureAuthenticationStub != nil {
-		return fake.ConfigureAuthenticationStub()
+		return fake.ConfigureAuthenticationStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
@@ -197,10 +217,17 @@ func (fake *FakeOpsmanClient) ConfigureAuthenticationCallCount() int {
 	return len(fake.configureAuthenticationArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) ConfigureAuthenticationCalls(stub func() error) {
+func (fake *FakeOpsmanClient) ConfigureAuthenticationCalls(stub func(context.Context) error) {
 	fake.configureAuthenticationMutex.Lock()
 	defer fake.configureAuthenticationMutex.Unlock()
 	fake.ConfigureAuthenticationStub = stub
+}
+
+func (fake *FakeOpsmanClient) ConfigureAuthenticationArgsForCall(i int) context.Context {
+	fake.configureAuthenticationMutex.RLock()
+	defer fake.configureAuthenticationMutex.RUnlock()
+	argsForCall := fake.configureAuthenticationArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeOpsmanClient) ConfigureAuthenticationReturns(result1 error) {
@@ -226,21 +253,22 @@ func (fake *FakeOpsmanClient) ConfigureAuthenticationReturnsOnCall(i int, result
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) ConfigureDirector(arg1 []byte) error {
-	var arg1Copy []byte
-	if arg1 != nil {
-		arg1Copy = make([]byte, len(arg1))
-		copy(arg1Copy, arg1)
+func (fake *FakeOpsmanClient) ConfigureDirector(arg1 context.Context, arg2 []byte) error {
+	var arg2Copy []byte
+	if arg2 != nil {
+		arg2Copy = make([]byte, len(arg2))
+		copy(arg2Copy, arg2)
 	}
 	fake.configureDirectorMutex.Lock()
 	ret, specificReturn := fake.configureDirectorReturnsOnCall[len(fake.configureDirectorArgsForCall)]
 	fake.configureDirectorArgsForCall = append(fake.configureDirectorArgsForCall, struct {
-		arg1 []byte
-	}{arg1Copy})
-	fake.recordInvocation("ConfigureDirector", []interface{}{arg1Copy})
+		arg1 context.Context
+		arg2 []byte
+	}{arg1, arg2Copy})
+	fake.recordInvocation("ConfigureDirector", []interface{}{arg1, arg2Copy})
 	fake.configureDirectorMutex.Unlock()
 	if fake.ConfigureDirectorStub != nil {
-		return fake.ConfigureDirectorStub(arg1)
+		return fake.ConfigureDirectorStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -255,17 +283,17 @@ func (fake *FakeOpsmanClient) ConfigureDirectorCallCount() int {
 	return len(fake.configureDirectorArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) ConfigureDirectorCalls(stub func([]byte) error) {
+func (fake *FakeOpsmanClient) ConfigureDirectorCalls(stub func(context.Context, []byte) error) {
 	fake.configureDirectorMutex.Lock()
 	defer fake.configureDirectorMutex.Unlock()
 	fake.ConfigureDirectorStub = stub
 }
 
-func (fake *FakeOpsmanClient) ConfigureDirectorArgsForCall(i int) []byte {
+func (fake *FakeOpsmanClient) ConfigureDirectorArgsForCall(i int) (context.Context, []byte) {
 	fake.configureDirectorMutex.RLock()
 	defer fake.configureDirectorMutex.RUnlock()
 	argsForCall := fake.configureDirectorArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeOpsmanClient) ConfigureDirectorReturns(result1 error) {
@@ -291,21 +319,22 @@ func (fake *FakeOpsmanClient) ConfigureDirectorReturnsOnCall(i int, result1 erro
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) ConfigureProduct(arg1 []byte) error {
-	var arg1Copy []byte
-	if arg1 != nil {
-		arg1Copy = make([]byte, len(arg1))
-		copy(arg1Copy, arg1)
+func (fake *FakeOpsmanClient) ConfigureProduct(arg1 context.Context, arg2 []byte) error {
+	var arg2Copy []byte
+	if arg2 != nil {
+		arg2Copy = make([]byte, len(arg2))
+		copy(arg2Copy, arg2)
 	}
 	fake.configureProductMutex.Lock()
 	ret, specificReturn := fake.configureProductReturnsOnCall[len(fake.configureProductArgsForCall)]
 	fake.configureProductArgsForCall = append(fake.configureProductArgsForCall, struct {
-		arg1 []byte
-	}{arg1Copy})
-	fake.recordInvocation("ConfigureProduct", []interface{}{arg1Copy})
+		arg1 context.Context
+		arg2 []byte
+	}{arg1, arg2Copy})
+	fake.recordInvocation("ConfigureProduct", []interface{}{arg1, arg2Copy})
 	fake.configureProductMutex.Unlock()
 	if fake.ConfigureProductStub != nil {
-		return fake.ConfigureProductStub(arg1)
+		return fake.ConfigureProductStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -320,17 +349,17 @@ func (fake *FakeOpsmanClient) ConfigureProductCallCount() int {
 	return len(fake.configureProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) ConfigureProductCalls(stub func([]byte) error) {
+func (fake *FakeOpsmanClient) ConfigureProductCalls(stub func(context.Context, []byte) error) {
 	fake.configureProductMutex.Lock()
 	defer fake.configureProductMutex.Unlock()
 	fake.ConfigureProductStub = stub
 }
 
-func (fake *FakeOpsmanClient) ConfigureProductArgsForCall(i int) []byte {
+func (fake *FakeOpsmanClient) ConfigureProductArgsForCall(i int) (context.Context, []byte) {
 	fake.configureProductMutex.RLock()
 	defer fake.configureProductMutex.RUnlock()
 	argsForCall := fake.configureProductArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeOpsmanClient) ConfigureProductReturns(result1 error) {
@@ -356,15 +385,16 @@ func (fake *FakeOpsmanClient) ConfigureProductReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) DeleteInstallation() error {
+func (fake *FakeOpsmanClient) DeleteInstallation(arg1 context.Context) error {
 	fake.deleteInstallationMutex.Lock()
 	ret, specificReturn := fake.deleteInstallationReturnsOnCall[len(fake.deleteInstallationArgsForCall)]
 	fake.deleteInstallationArgsForCall = append(fake.deleteInstallationArgsForCall, struct {
-	}{})
-	fake.recordInvocation("DeleteInstallation", []interface{}{})
+		arg1 context.Context
+	}{arg1})
+	fake.recordInvocation("DeleteInstallation", []interface{}{arg1})
 	fake.deleteInstallationMutex.Unlock()
 	if fake.DeleteInstallationStub != nil {
-		return fake.DeleteInstallationStub()
+		return fake.DeleteInstallationStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
@@ -379,10 +409,17 @@ func (fake *FakeOpsmanClient) DeleteInstallationCallCount() int {
 	return len(fake.deleteInstallationArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) DeleteInstallationCalls(stub func() error) {
+func (fake *FakeOpsmanClient) DeleteInstallationCalls(stub func(context.Context) error) {
 	fake.deleteInstallationMutex.Lock()
 	defer fake.deleteInstallationMutex.Unlock()
 	fake.DeleteInstallationStub = stub
+}
+
+func (fake *FakeOpsmanClient) DeleteInstallationArgsForCall(i int) context.Context {
+	fake.deleteInstallationMutex.RLock()
+	defer fake.deleteInstallationMutex.RUnlock()
+	argsForCall := fake.deleteInstallationArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeOpsmanClient) DeleteInstallationReturns(result1 error) {
@@ -408,16 +445,17 @@ func (fake *FakeOpsmanClient) DeleteInstallationReturnsOnCall(i int, result1 err
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) FilesUploaded(arg1 pattern.Tile) (bool, error) {
+func (fake *FakeOpsmanClient) FilesUploaded(arg1 context.Context, arg2 pattern.Tile) (bool, error) {
 	fake.filesUploadedMutex.Lock()
 	ret, specificReturn := fake.filesUploadedReturnsOnCall[len(fake.filesUploadedArgsForCall)]
 	fake.filesUploadedArgsForCall = append(fake.filesUploadedArgsForCall, struct {
-		arg1 pattern.Tile
-	}{arg1})
-	fake.recordInvocation("FilesUploaded", []interface{}{arg1})
+		arg1 context.Context
+		arg2 pattern.Tile
+	}{arg1, arg2})
+	fake.recordInvocation("FilesUploaded", []interface{}{arg1, arg2})
 	fake.filesUploadedMutex.Unlock()
 	if fake.FilesUploadedStub != nil {
-		return fake.FilesUploadedStub(arg1)
+		return fake.FilesUploadedStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -432,17 +470,17 @@ func (fake *FakeOpsmanClient) FilesUploadedCallCount() int {
 	return len(fake.filesUploadedArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) FilesUploadedCalls(stub func(pattern.Tile) (bool, error)) {
+func (fake *FakeOpsmanClient) FilesUploadedCalls(stub func(context.Context, pattern.Tile) (bool, error)) {
 	fake.filesUploadedMutex.Lock()
 	defer fake.filesUploadedMutex.Unlock()
 	fake.FilesUploadedStub = stub
 }
 
-func (fake *FakeOpsmanClient) FilesUploadedArgsForCall(i int) pattern.Tile {
+func (fake *FakeOpsmanClient) FilesUploadedArgsForCall(i int) (context.Context, pattern.Tile) {
 	fake.filesUploadedMutex.RLock()
 	defer fake.filesUploadedMutex.RUnlock()
 	argsForCall := fake.filesUploadedArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeOpsmanClient) FilesUploadedReturns(result1 bool, result2 error) {
@@ -471,15 +509,16 @@ func (fake *FakeOpsmanClient) FilesUploadedReturnsOnCall(i int, result1 bool, re
 	}{result1, result2}
 }
 
-func (fake *FakeOpsmanClient) PollTillOnline() error {
+func (fake *FakeOpsmanClient) PollTillOnline(arg1 context.Context) error {
 	fake.pollTillOnlineMutex.Lock()
 	ret, specificReturn := fake.pollTillOnlineReturnsOnCall[len(fake.pollTillOnlineArgsForCall)]
 	fake.pollTillOnlineArgsForCall = append(fake.pollTillOnlineArgsForCall, struct {
-	}{})
-	fake.recordInvocation("PollTillOnline", []interface{}{})
+		arg1 context.Context
+	}{arg1})
+	fake.recordInvocation("PollTillOnline", []interface{}{arg1})
 	fake.pollTillOnlineMutex.Unlock()
 	if fake.PollTillOnlineStub != nil {
-		return fake.PollTillOnlineStub()
+		return fake.PollTillOnlineStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
@@ -494,10 +533,17 @@ func (fake *FakeOpsmanClient) PollTillOnlineCallCount() int {
 	return len(fake.pollTillOnlineArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) PollTillOnlineCalls(stub func() error) {
+func (fake *FakeOpsmanClient) PollTillOnlineCalls(stub func(context.Context) error) {
 	fake.pollTillOnlineMutex.Lock()
 	defer fake.pollTillOnlineMutex.Unlock()
 	fake.PollTillOnlineStub = stub
+}
+
+func (fake *FakeOpsmanClient) PollTillOnlineArgsForCall(i int) context.Context {
+	fake.pollTillOnlineMutex.RLock()
+	defer fake.pollTillOnlineMutex.RUnlock()
+	argsForCall := fake.pollTillOnlineArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeOpsmanClient) PollTillOnlineReturns(result1 error) {
@@ -523,16 +569,17 @@ func (fake *FakeOpsmanClient) PollTillOnlineReturnsOnCall(i int, result1 error) 
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) StageProduct(arg1 pattern.Tile) error {
+func (fake *FakeOpsmanClient) StageProduct(arg1 context.Context, arg2 pattern.Tile) error {
 	fake.stageProductMutex.Lock()
 	ret, specificReturn := fake.stageProductReturnsOnCall[len(fake.stageProductArgsForCall)]
 	fake.stageProductArgsForCall = append(fake.stageProductArgsForCall, struct {
-		arg1 pattern.Tile
-	}{arg1})
-	fake.recordInvocation("StageProduct", []interface{}{arg1})
+		arg1 context.Context
+		arg2 pattern.Tile
+	}{arg1, arg2})
+	fake.recordInvocation("StageProduct", []interface{}{arg1, arg2})
 	fake.stageProductMutex.Unlock()
 	if fake.StageProductStub != nil {
-		return fake.StageProductStub(arg1)
+		return fake.StageProductStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -547,17 +594,17 @@ func (fake *FakeOpsmanClient) StageProductCallCount() int {
 	return len(fake.stageProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) StageProductCalls(stub func(pattern.Tile) error) {
+func (fake *FakeOpsmanClient) StageProductCalls(stub func(context.Context, pattern.Tile) error) {
 	fake.stageProductMutex.Lock()
 	defer fake.stageProductMutex.Unlock()
 	fake.StageProductStub = stub
 }
 
-func (fake *FakeOpsmanClient) StageProductArgsForCall(i int) pattern.Tile {
+func (fake *FakeOpsmanClient) StageProductArgsForCall(i int) (context.Context, pattern.Tile) {
 	fake.stageProductMutex.RLock()
 	defer fake.stageProductMutex.RUnlock()
 	argsForCall := fake.stageProductArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeOpsmanClient) StageProductReturns(result1 error) {
@@ -583,16 +630,17 @@ func (fake *FakeOpsmanClient) StageProductReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) UploadProduct(arg1 *os.File) error {
+func (fake *FakeOpsmanClient) UploadProduct(arg1 context.Context, arg2 *os.File) error {
 	fake.uploadProductMutex.Lock()
 	ret, specificReturn := fake.uploadProductReturnsOnCall[len(fake.uploadProductArgsForCall)]
 	fake.uploadProductArgsForCall = append(fake.uploadProductArgsForCall, struct {
-		arg1 *os.File
-	}{arg1})
-	fake.recordInvocation("UploadProduct", []interface{}{arg1})
+		arg1 context.Context
+		arg2 *os.File
+	}{arg1, arg2})
+	fake.recordInvocation("UploadProduct", []interface{}{arg1, arg2})
 	fake.uploadProductMutex.Unlock()
 	if fake.UploadProductStub != nil {
-		return fake.UploadProductStub(arg1)
+		return fake.UploadProductStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -607,17 +655,17 @@ func (fake *FakeOpsmanClient) UploadProductCallCount() int {
 	return len(fake.uploadProductArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) UploadProductCalls(stub func(*os.File) error) {
+func (fake *FakeOpsmanClient) UploadProductCalls(stub func(context.Context, *os.File) error) {
 	fake.uploadProductMutex.Lock()
 	defer fake.uploadProductMutex.Unlock()
 	fake.UploadProductStub = stub
 }
 
-func (fake *FakeOpsmanClient) UploadProductArgsForCall(i int) *os.File {
+func (fake *FakeOpsmanClient) UploadProductArgsForCall(i int) (context.Context, *os.File) {
 	fake.uploadProductMutex.RLock()
 	defer fake.uploadProductMutex.RUnlock()
 	argsForCall := fake.uploadProductArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeOpsmanClient) UploadProductReturns(result1 error) {
@@ -643,16 +691,17 @@ func (fake *FakeOpsmanClient) UploadProductReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeOpsmanClient) UploadStemcell(arg1 *os.File) error {
+func (fake *FakeOpsmanClient) UploadStemcell(arg1 context.Context, arg2 *os.File) error {
 	fake.uploadStemcellMutex.Lock()
 	ret, specificReturn := fake.uploadStemcellReturnsOnCall[len(fake.uploadStemcellArgsForCall)]
 	fake.uploadStemcellArgsForCall = append(fake.uploadStemcellArgsForCall, struct {
-		arg1 *os.File
-	}{arg1})
-	fake.recordInvocation("UploadStemcell", []interface{}{arg1})
+		arg1 context.Context
+		arg2 *os.File
+	}{arg1, arg2})
+	fake.recordInvocation("UploadStemcell", []interface{}{arg1, arg2})
 	fake.uploadStemcellMutex.Unlock()
 	if fake.UploadStemcellStub != nil {
-		return fake.UploadStemcellStub(arg1)
+		return fake.UploadStemcellStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -667,17 +716,17 @@ func (fake *FakeOpsmanClient) UploadStemcellCallCount() int {
 	return len(fake.uploadStemcellArgsForCall)
 }
 
-func (fake *FakeOpsmanClient) UploadStemcellCalls(stub func(*os.File) error) {
+func (fake *FakeOpsmanClient) UploadStemcellCalls(stub func(context.Context, *os.File) error) {
 	fake.uploadStemcellMutex.Lock()
 	defer fake.uploadStemcellMutex.Unlock()
 	fake.UploadStemcellStub = stub
 }
 
-func (fake *FakeOpsmanClient) UploadStemcellArgsForCall(i int) *os.File {
+func (fake *FakeOpsmanClient) UploadStemcellArgsForCall(i int) (context.Context, *os.File) {
 	fake.uploadStemcellMutex.RLock()
 	defer fake.uploadStemcellMutex.RUnlock()
 	argsForCall := fake.uploadStemcellArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeOpsmanClient) UploadStemcellReturns(result1 error) {

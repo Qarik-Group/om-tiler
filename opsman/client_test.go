@@ -1,6 +1,7 @@
 package opsman_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -108,7 +109,7 @@ var _ = Describe("Client", func() {
 			})
 
 			It("accepts the EULA for a given release and product Version", func() {
-				ok, err := client.FilesUploaded(tile)
+				ok, err := client.FilesUploaded(context.Background(), tile)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ok).To(Equal(true))
 			})
@@ -121,7 +122,7 @@ var _ = Describe("Client", func() {
 			})
 
 			It("accepts the EULA for a given release and product Version", func() {
-				ok, err := client.FilesUploaded(tile)
+				ok, err := client.FilesUploaded(context.Background(), tile)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ok).To(Equal(false))
 			})
@@ -134,7 +135,7 @@ var _ = Describe("Client", func() {
 			})
 
 			It("accepts the EULA for a given release and product Version", func() {
-				ok, err := client.FilesUploaded(tile)
+				ok, err := client.FilesUploaded(context.Background(), tile)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(ok).To(Equal(false))
 			})

@@ -1,6 +1,7 @@
 package pivnet_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -98,7 +99,7 @@ var _ = Describe("Client", func() {
 
 			It("accepts the EULA for a given release and product Version", func() {
 
-				Expect(client.AcceptEULA(pattern.PivnetFile{
+				Expect(client.AcceptEULA(context.Background(), pattern.PivnetFile{
 					Slug:    productSlug,
 					Version: releaseVersion,
 					Glob:    "*.tgz",
@@ -118,7 +119,7 @@ var _ = Describe("Client", func() {
 			})
 
 			It("accepts the EULA for a given release and product Version", func() {
-				Expect(client.AcceptEULA(pattern.PivnetFile{
+				Expect(client.AcceptEULA(context.Background(), pattern.PivnetFile{
 					Slug:    productSlug,
 					Version: releaseVersion,
 					Glob:    "*.tgz",

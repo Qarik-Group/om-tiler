@@ -2,6 +2,7 @@
 package tilerfakes
 
 import (
+	"context"
 	"os"
 	"sync"
 
@@ -10,10 +11,11 @@ import (
 )
 
 type FakeMover struct {
-	CacheStub        func(pattern.PivnetFile) error
+	CacheStub        func(context.Context, pattern.PivnetFile) error
 	cacheMutex       sync.RWMutex
 	cacheArgsForCall []struct {
-		arg1 pattern.PivnetFile
+		arg1 context.Context
+		arg2 pattern.PivnetFile
 	}
 	cacheReturns struct {
 		result1 error
@@ -21,10 +23,11 @@ type FakeMover struct {
 	cacheReturnsOnCall map[int]struct {
 		result1 error
 	}
-	GetStub        func(pattern.PivnetFile) (*os.File, error)
+	GetStub        func(context.Context, pattern.PivnetFile) (*os.File, error)
 	getMutex       sync.RWMutex
 	getArgsForCall []struct {
-		arg1 pattern.PivnetFile
+		arg1 context.Context
+		arg2 pattern.PivnetFile
 	}
 	getReturns struct {
 		result1 *os.File
@@ -38,16 +41,17 @@ type FakeMover struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeMover) Cache(arg1 pattern.PivnetFile) error {
+func (fake *FakeMover) Cache(arg1 context.Context, arg2 pattern.PivnetFile) error {
 	fake.cacheMutex.Lock()
 	ret, specificReturn := fake.cacheReturnsOnCall[len(fake.cacheArgsForCall)]
 	fake.cacheArgsForCall = append(fake.cacheArgsForCall, struct {
-		arg1 pattern.PivnetFile
-	}{arg1})
-	fake.recordInvocation("Cache", []interface{}{arg1})
+		arg1 context.Context
+		arg2 pattern.PivnetFile
+	}{arg1, arg2})
+	fake.recordInvocation("Cache", []interface{}{arg1, arg2})
 	fake.cacheMutex.Unlock()
 	if fake.CacheStub != nil {
-		return fake.CacheStub(arg1)
+		return fake.CacheStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -62,17 +66,17 @@ func (fake *FakeMover) CacheCallCount() int {
 	return len(fake.cacheArgsForCall)
 }
 
-func (fake *FakeMover) CacheCalls(stub func(pattern.PivnetFile) error) {
+func (fake *FakeMover) CacheCalls(stub func(context.Context, pattern.PivnetFile) error) {
 	fake.cacheMutex.Lock()
 	defer fake.cacheMutex.Unlock()
 	fake.CacheStub = stub
 }
 
-func (fake *FakeMover) CacheArgsForCall(i int) pattern.PivnetFile {
+func (fake *FakeMover) CacheArgsForCall(i int) (context.Context, pattern.PivnetFile) {
 	fake.cacheMutex.RLock()
 	defer fake.cacheMutex.RUnlock()
 	argsForCall := fake.cacheArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeMover) CacheReturns(result1 error) {
@@ -98,16 +102,17 @@ func (fake *FakeMover) CacheReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeMover) Get(arg1 pattern.PivnetFile) (*os.File, error) {
+func (fake *FakeMover) Get(arg1 context.Context, arg2 pattern.PivnetFile) (*os.File, error) {
 	fake.getMutex.Lock()
 	ret, specificReturn := fake.getReturnsOnCall[len(fake.getArgsForCall)]
 	fake.getArgsForCall = append(fake.getArgsForCall, struct {
-		arg1 pattern.PivnetFile
-	}{arg1})
-	fake.recordInvocation("Get", []interface{}{arg1})
+		arg1 context.Context
+		arg2 pattern.PivnetFile
+	}{arg1, arg2})
+	fake.recordInvocation("Get", []interface{}{arg1, arg2})
 	fake.getMutex.Unlock()
 	if fake.GetStub != nil {
-		return fake.GetStub(arg1)
+		return fake.GetStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -122,17 +127,17 @@ func (fake *FakeMover) GetCallCount() int {
 	return len(fake.getArgsForCall)
 }
 
-func (fake *FakeMover) GetCalls(stub func(pattern.PivnetFile) (*os.File, error)) {
+func (fake *FakeMover) GetCalls(stub func(context.Context, pattern.PivnetFile) (*os.File, error)) {
 	fake.getMutex.Lock()
 	defer fake.getMutex.Unlock()
 	fake.GetStub = stub
 }
 
-func (fake *FakeMover) GetArgsForCall(i int) pattern.PivnetFile {
+func (fake *FakeMover) GetArgsForCall(i int) (context.Context, pattern.PivnetFile) {
 	fake.getMutex.RLock()
 	defer fake.getMutex.RUnlock()
 	argsForCall := fake.getArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeMover) GetReturns(result1 *os.File, result2 error) {

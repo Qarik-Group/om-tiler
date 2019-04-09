@@ -2,6 +2,7 @@
 package moverfakes
 
 import (
+	"context"
 	"os"
 	"sync"
 
@@ -10,11 +11,12 @@ import (
 )
 
 type FakePivnetClient struct {
-	DownloadFileStub        func(pattern.PivnetFile, string) (*os.File, error)
+	DownloadFileStub        func(context.Context, pattern.PivnetFile, string) (*os.File, error)
 	downloadFileMutex       sync.RWMutex
 	downloadFileArgsForCall []struct {
-		arg1 pattern.PivnetFile
-		arg2 string
+		arg1 context.Context
+		arg2 pattern.PivnetFile
+		arg3 string
 	}
 	downloadFileReturns struct {
 		result1 *os.File
@@ -28,17 +30,18 @@ type FakePivnetClient struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakePivnetClient) DownloadFile(arg1 pattern.PivnetFile, arg2 string) (*os.File, error) {
+func (fake *FakePivnetClient) DownloadFile(arg1 context.Context, arg2 pattern.PivnetFile, arg3 string) (*os.File, error) {
 	fake.downloadFileMutex.Lock()
 	ret, specificReturn := fake.downloadFileReturnsOnCall[len(fake.downloadFileArgsForCall)]
 	fake.downloadFileArgsForCall = append(fake.downloadFileArgsForCall, struct {
-		arg1 pattern.PivnetFile
-		arg2 string
-	}{arg1, arg2})
-	fake.recordInvocation("DownloadFile", []interface{}{arg1, arg2})
+		arg1 context.Context
+		arg2 pattern.PivnetFile
+		arg3 string
+	}{arg1, arg2, arg3})
+	fake.recordInvocation("DownloadFile", []interface{}{arg1, arg2, arg3})
 	fake.downloadFileMutex.Unlock()
 	if fake.DownloadFileStub != nil {
-		return fake.DownloadFileStub(arg1, arg2)
+		return fake.DownloadFileStub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -53,17 +56,17 @@ func (fake *FakePivnetClient) DownloadFileCallCount() int {
 	return len(fake.downloadFileArgsForCall)
 }
 
-func (fake *FakePivnetClient) DownloadFileCalls(stub func(pattern.PivnetFile, string) (*os.File, error)) {
+func (fake *FakePivnetClient) DownloadFileCalls(stub func(context.Context, pattern.PivnetFile, string) (*os.File, error)) {
 	fake.downloadFileMutex.Lock()
 	defer fake.downloadFileMutex.Unlock()
 	fake.DownloadFileStub = stub
 }
 
-func (fake *FakePivnetClient) DownloadFileArgsForCall(i int) (pattern.PivnetFile, string) {
+func (fake *FakePivnetClient) DownloadFileArgsForCall(i int) (context.Context, pattern.PivnetFile, string) {
 	fake.downloadFileMutex.RLock()
 	defer fake.downloadFileMutex.RUnlock()
 	argsForCall := fake.downloadFileArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
 func (fake *FakePivnetClient) DownloadFileReturns(result1 *os.File, result2 error) {

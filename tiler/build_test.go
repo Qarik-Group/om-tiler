@@ -1,6 +1,7 @@
 package tiler_test
 
 import (
+	"context"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -42,7 +43,7 @@ var _ = Describe("Build", func() {
 		BeforeEach(func() {
 			fakeOpsman = &tilerfakes.FakeOpsmanClient{}
 			fakeMover = &tilerfakes.FakeMover{
-				GetStub: func(f pattern.PivnetFile) (*os.File, error) {
+				GetStub: func(ctx context.Context, f pattern.PivnetFile) (*os.File, error) {
 					return ioutil.TempFile("", f.Slug)
 				},
 			}
@@ -51,8 +52,7 @@ var _ = Describe("Build", func() {
 		JustBeforeEach(func() {
 			logger := log.New(GinkgoWriter, "", 0)
 			templateStore := http.Dir(assetsDir())
-			tiler, err := NewTiler(fakeOpsman, fakeMover, logger)
-			Expect(err).ToNot(HaveOccurred())
+			tiler := NewTiler(fakeOpsman, fakeMover, logger)
 			p, err := pattern.NewPattern(pattern.Template{
 				Manifest: "pattern.yml",
 				Vars: map[string]interface{}{
@@ -65,33 +65,34 @@ var _ = Describe("Build", func() {
 				Store:    templateStore,
 			}, varsStore, true)
 			Expect(err).ToNot(HaveOccurred())
-			buildErr = tiler.Build(p, skipApplyChanges)
+			ctx := context.Background()
+			buildErr = tiler.Build(ctx, p, skipApplyChanges)
 		})
 
 		It("Configures the director", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			config := fakeOpsman.ConfigureDirectorArgsForCall(0)
+			_, config := fakeOpsman.ConfigureDirectorArgsForCall(0)
 			Expect(config).To(MatchYAML(readAsset("results/director-config.yml")))
 		})
 
 		It("Downloads the tiles and stemcells from Pivotal Network", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			args := fakeMover.GetArgsForCall(0)
+			_, args := fakeMover.GetArgsForCall(0)
 			Expect(args.Slug).To(Equal("p-healthwatch"))
 			Expect(args.Version).To(Equal("1.2.3"))
 			Expect(args.Glob).To(Equal("*.pivotal"))
 
-			args = fakeMover.GetArgsForCall(1)
+			_, args = fakeMover.GetArgsForCall(1)
 			Expect(args.Slug).To(Equal("stemcells-ubuntu-xenial"))
 			Expect(args.Version).To(Equal("170.38"))
 			Expect(args.Glob).To(Equal("*vsphere*.tgz"))
 
-			args = fakeMover.GetArgsForCall(2)
+			_, args = fakeMover.GetArgsForCall(2)
 			Expect(args.Slug).To(Equal("elastic-runtime"))
 			Expect(args.Version).To(Equal("3.2.1"))
 			Expect(args.Glob).To(Equal("srt*.pivotal"))
 
-			args = fakeMover.GetArgsForCall(3)
+			_, args = fakeMover.GetArgsForCall(3)
 			Expect(args.Slug).To(Equal("stemcells-ubuntu-trusty"))
 			Expect(args.Version).To(Equal("170.50"))
 			Expect(args.Glob).To(Equal("*gcp*.tgz"))
@@ -99,30 +100,30 @@ var _ = Describe("Build", func() {
 
 		It("Uploads the tiles and stemcells to Ops Manager", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			Expect(fakeOpsman.UploadProductArgsForCall(0).Name()).
-				To(ContainSubstring("p-healthwatch"))
-			Expect(fakeOpsman.UploadStemcellArgsForCall(0).Name()).
-				To(ContainSubstring("stemcells-ubuntu-xenial"))
-			Expect(fakeOpsman.UploadProductArgsForCall(1).Name()).
-				To(ContainSubstring("elastic-runtime"))
-			Expect(fakeOpsman.UploadStemcellArgsForCall(1).Name()).
-				To(ContainSubstring("stemcells-ubuntu-trusty"))
+			_, pargs := fakeOpsman.UploadProductArgsForCall(0)
+			Expect(pargs.Name()).To(ContainSubstring("p-healthwatch"))
+			_, sargs := fakeOpsman.UploadStemcellArgsForCall(0)
+			Expect(sargs.Name()).To(ContainSubstring("stemcells-ubuntu-xenial"))
+			_, pargs = fakeOpsman.UploadProductArgsForCall(1)
+			Expect(pargs.Name()).To(ContainSubstring("elastic-runtime"))
+			_, sargs = fakeOpsman.UploadStemcellArgsForCall(1)
+			Expect(sargs.Name()).To(ContainSubstring("stemcells-ubuntu-trusty"))
 		})
 
 		It("Stages the products", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			args := fakeOpsman.StageProductArgsForCall(0)
+			_, args := fakeOpsman.StageProductArgsForCall(0)
 			Expect(args.Name).To(Equal("p-healthwatch"))
 			Expect(args.Version).To(Equal("1.2.3-build.1"))
 
-			args = fakeOpsman.StageProductArgsForCall(1)
+			_, args = fakeOpsman.StageProductArgsForCall(1)
 			Expect(args.Name).To(Equal("cf"))
 			Expect(args.Version).To(Equal("3.2.1"))
 		})
 
 		It("Configures the products", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			config := fakeOpsman.ConfigureProductArgsForCall(0)
+			_, config := fakeOpsman.ConfigureProductArgsForCall(0)
 			Expect(config).To(MatchYAML(readAsset("results/p-healthwatch.yml")))
 		})
 
