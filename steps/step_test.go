@@ -12,12 +12,16 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+const (
+	StepFoo string = "FooStep"
+	StepBar        = "BarStep"
+)
+
 var _ = Describe("Step", func() {
 	var (
-		logger  *log.Logger
-		buffer  *bytes.Buffer
-		stepFoo func(r map[string]interface{}) (interface{}, error)
-		stepBar func(r map[string]interface{}) (interface{}, error)
+		logger *log.Logger
+		buffer *bytes.Buffer
+		steps  []Step
 	)
 
 	BeforeEach(func() {
@@ -28,25 +32,34 @@ var _ = Describe("Step", func() {
 
 	Context("Given multiple steps", func() {
 		BeforeEach(func() {
-			ctx := context.Background()
-			stepFoo = Step(ctx, "stepFoo", func(ctx context.Context) error {
-				ContextLogger(ctx, logger, "[Foo]").Println("hello foo")
-				return nil
-			})
-			stepBar = Step(ctx, "stepBar", func(ctx context.Context) error {
-				ContextLogger(ctx, logger, "[Bar]").Println("hello bar")
-				return nil
-			})
+			steps = []Step{
+				Step{
+					Name:      StepFoo,
+					DependsOn: []string{StepBar},
+					Do: func(ctx context.Context) error {
+						ContextLogger(ctx, logger, "[Foo]").Println("hello foo")
+						return nil
+					}},
+				Step{
+					Name: StepBar,
+					Do: func(ctx context.Context) error {
+						ContextLogger(ctx, logger, "[Bar]").Println("hello bar")
+						return nil
+					},
+				},
+				Step{
+					Name:      "NullStep",
+					DependsOn: []string{StepBar},
+				},
+			}
 		})
 
 		It("Prefixes logs", func() {
-			_, err := stepFoo(map[string]interface{}{})
-			Expect(err).ToNot(HaveOccurred())
-			_, err = stepBar(map[string]interface{}{})
+			err := Run(context.Background(), steps)
 			Expect(err).ToNot(HaveOccurred())
 			lines := strings.Split(string(buffer.Bytes()), "\n")
-			Expect(lines[0]).To(Equal("root [Foo] stepFoo hello foo"))
-			Expect(lines[1]).To(Equal("root [Bar] stepBar hello bar"))
+			Expect(lines[0]).To(Equal("root [Bar] BarStep hello bar"))
+			Expect(lines[1]).To(Equal("root [Foo] FooStep hello foo"))
 		})
 	})
 

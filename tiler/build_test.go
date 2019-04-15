@@ -3,6 +3,7 @@ package tiler_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -77,53 +78,67 @@ var _ = Describe("Build", func() {
 
 		It("Downloads the tiles and stemcells from Pivotal Network", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			_, args := fakeMover.GetArgsForCall(0)
-			Expect(args.Slug).To(Equal("p-healthwatch"))
-			Expect(args.Version).To(Equal("1.2.3"))
-			Expect(args.Glob).To(Equal("*.pivotal"))
-
-			_, args = fakeMover.GetArgsForCall(1)
-			Expect(args.Slug).To(Equal("stemcells-ubuntu-xenial"))
-			Expect(args.Version).To(Equal("170.38"))
-			Expect(args.Glob).To(Equal("*vsphere*.tgz"))
-
-			_, args = fakeMover.GetArgsForCall(2)
-			Expect(args.Slug).To(Equal("elastic-runtime"))
-			Expect(args.Version).To(Equal("3.2.1"))
-			Expect(args.Glob).To(Equal("srt*.pivotal"))
-
-			_, args = fakeMover.GetArgsForCall(3)
-			Expect(args.Slug).To(Equal("stemcells-ubuntu-trusty"))
-			Expect(args.Version).To(Equal("170.50"))
-			Expect(args.Glob).To(Equal("*gcp*.tgz"))
+			var args []pattern.PivnetFile
+			for i := 0; i < fakeMover.GetCallCount(); i++ {
+				_, a := fakeMover.GetArgsForCall(i)
+				args = append(args, a)
+			}
+			Expect(args).To(ContainElement(pattern.PivnetFile{
+				Slug:    "p-healthwatch",
+				Version: "1.2.3",
+				Glob:    "*.pivotal",
+			}))
+			Expect(args).To(ContainElement(pattern.PivnetFile{
+				Slug:    "stemcells-ubuntu-xenial",
+				Version: "170.38",
+				Glob:    "*vsphere*.tgz",
+			}))
+			Expect(args).To(ContainElement(pattern.PivnetFile{
+				Slug:    "elastic-runtime",
+				Version: "3.2.1",
+				Glob:    "srt*.pivotal",
+			}))
+			Expect(args).To(ContainElement(pattern.PivnetFile{
+				Slug:    "stemcells-ubuntu-trusty",
+				Version: "170.50",
+				Glob:    "*gcp*.tgz",
+			}))
 		})
 
 		It("Uploads the tiles and stemcells to Ops Manager", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			_, pargs := fakeOpsman.UploadProductArgsForCall(0)
-			Expect(pargs.Name()).To(ContainSubstring("p-healthwatch"))
-			_, sargs := fakeOpsman.UploadStemcellArgsForCall(0)
-			Expect(sargs.Name()).To(ContainSubstring("stemcells-ubuntu-xenial"))
-			_, pargs = fakeOpsman.UploadProductArgsForCall(1)
-			Expect(pargs.Name()).To(ContainSubstring("elastic-runtime"))
-			_, sargs = fakeOpsman.UploadStemcellArgsForCall(1)
-			Expect(sargs.Name()).To(ContainSubstring("stemcells-ubuntu-trusty"))
+			var args []string
+			for i := 0; i < fakeOpsman.UploadProductCallCount(); i++ {
+				_, a := fakeOpsman.UploadProductArgsForCall(i)
+				args = append(args, a.Name())
+			}
+			for i := 0; i < fakeOpsman.UploadStemcellCallCount(); i++ {
+				_, a := fakeOpsman.UploadStemcellArgsForCall(i)
+				args = append(args, a.Name())
+			}
+
+			Expect(args).To(ContainElement(ContainSubstring("p-healthwatch")))
+			Expect(args).To(ContainElement(ContainSubstring("stemcells-ubuntu-xenial")))
+			Expect(args).To(ContainElement(ContainSubstring("elastic-runtime")))
+			Expect(args).To(ContainElement(ContainSubstring("stemcells-ubuntu-trusty")))
 		})
 
 		It("Stages the products", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			_, args := fakeOpsman.StageProductArgsForCall(0)
-			Expect(args.Name).To(Equal("p-healthwatch"))
-			Expect(args.Version).To(Equal("1.2.3-build.1"))
+			var args []string
+			for i := 0; i < fakeOpsman.StageProductCallCount(); i++ {
+				_, a := fakeOpsman.StageProductArgsForCall(i)
+				args = append(args,
+					fmt.Sprintf("%s/%s", a.Name, a.Version))
+			}
 
-			_, args = fakeOpsman.StageProductArgsForCall(1)
-			Expect(args.Name).To(Equal("cf"))
-			Expect(args.Version).To(Equal("3.2.1"))
+			Expect(args).To(ContainElement("p-healthwatch/1.2.3-build.1"))
+			Expect(args).To(ContainElement("cf/3.2.1"))
 		})
 
 		It("Configures the products", func() {
 			Expect(buildErr).ToNot(HaveOccurred())
-			_, config := fakeOpsman.ConfigureProductArgsForCall(0)
+			_, config := fakeOpsman.ConfigureProductArgsForCall(1)
 			Expect(config).To(MatchYAML(readAsset("results/p-healthwatch.yml")))
 		})
 
