@@ -7,9 +7,12 @@ import (
 )
 
 func (t *Tiler) Delete(ctx context.Context) error {
-	return steps.Run(ctx, []steps.Step{
+	s := []steps.Step{
 		t.stepPollTillOnline(),
 		t.stepConfigureAuthentication(),
 		t.stepDeleteInstallation(),
-	})
+	}
+	s = append(s, t.callbacks[DeleteCallback]...)
+
+	return steps.Run(ctx, s)
 }
