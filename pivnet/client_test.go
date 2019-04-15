@@ -3,8 +3,10 @@ package pivnet_test
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -129,4 +131,134 @@ var _ = Describe("Client", func() {
 
 	})
 
+	Describe("DownloadFile", func() {
+		var (
+			releaseVersion  string
+			releaseID       int
+			releasesURL     string
+			productFilesURL string
+			fileID          int
+			fileName        string
+			fileURL         string
+			fileContent     string
+			downloadFileURL string
+			file            pattern.PivnetFile
+			downloadDir     string
+		)
+
+		Context("Given a PivnetFile with valid Slug, Version and Glob", func() {
+			JustBeforeEach(func() {
+				response := fmt.Sprintf(`{"releases":[{"id":40,"version":"3.3.0"},{"id":%d,"version":"%s"}]}`, releaseID, releaseVersion)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("GET", releasesURL),
+						ghttp.VerifyHeaderKV("Authorization", fmt.Sprintf("Token %s", token)),
+						ghttp.RespondWith(http.StatusOK, response),
+					),
+				)
+				response = fmt.Sprintf(`{"product_files":[{"id":40,"aws_object_key":"foo.pivotal"},{"id":%d,"aws_object_key":"%s"}]}`, fileID, fileName)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("GET", productFilesURL),
+						ghttp.VerifyHeaderKV("Authorization", fmt.Sprintf("Token %s", token)),
+						ghttp.RespondWith(http.StatusOK, response),
+					),
+				)
+				response = fmt.Sprintf(`{"product_file":{"_links":{"download":{"href": "%s"}}}}`, fileURL)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("GET", fmt.Sprintf("%s/%d", productFilesURL, fileID)),
+						ghttp.VerifyHeaderKV("Authorization", fmt.Sprintf("Token %s", token)),
+						ghttp.RespondWith(http.StatusOK, response),
+					),
+				)
+				responseHeader := http.Header{"Location": []string{fmt.Sprintf("%s%s", server.URL(), downloadFileURL)}}
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("POST", fmt.Sprintf("/api/v2%s", fileURL)),
+						ghttp.VerifyHeaderKV("Authorization", fmt.Sprintf("Token %s", token)),
+						ghttp.RespondWith(http.StatusFound, "", responseHeader),
+					),
+				)
+				responseHeader = http.Header{"Content-Length": []string{fmt.Sprintf("%d", len(fileContent))}}
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("HEAD", downloadFileURL),
+						ghttp.RespondWith(http.StatusOK, "", responseHeader),
+					),
+				)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("GET", downloadFileURL),
+						ghttp.RespondWith(http.StatusOK, fileContent),
+					),
+				)
+			})
+
+			BeforeEach(func() {
+				acceptEULA = false
+				releasesURL = "/api/v2/products/elastic-runtime/releases"
+				productFilesURL = "/api/v2/products/elastic-runtime/releases/22/product_files"
+				releaseID = 22
+				releaseVersion = "2.4"
+				fileID = 18
+				fileName = "foo-srt-2.4.pivotal"
+				fileURL = "/products/elastic-runtime/releases/22/product_files/18/download"
+				downloadFileURL = "/s3/donwload/foo-srt-2.4.pivotal"
+				fileContent = "c"
+				file = pattern.PivnetFile{
+					Slug:    "elastic-runtime",
+					Version: releaseVersion,
+					Glob:    "*srt*.pivotal",
+				}
+				var err error
+				downloadDir, err = ioutil.TempDir("", "downloadDir")
+				Expect(err).ToNot(HaveOccurred())
+			})
+
+			AfterEach(func() {
+				os.RemoveAll(downloadDir)
+			})
+
+			It("Downloads tile from pivnet", func() {
+				_, err := client.DownloadFile(context.Background(), file, downloadDir)
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
+		Context("Given a PivnetFile with download url", func() {
+			JustBeforeEach(func() {
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("GET", downloadFileURL),
+						ghttp.RespondWith(http.StatusOK, fileContent),
+					),
+				)
+			})
+
+			BeforeEach(func() {
+				downloadFileURL = "/cache/foo-srt-2.4.pivotal"
+				fileContent = "c"
+
+				file = pattern.PivnetFile{
+					Slug:    "elastic-runtime",
+					Version: releaseVersion,
+					Glob:    "*srt*.pivotal",
+					URL:     fmt.Sprintf("%s%s", server.URL(), downloadFileURL),
+				}
+				var err error
+				downloadDir, err = ioutil.TempDir("", "downloadDir")
+				Expect(err).ToNot(HaveOccurred())
+			})
+
+			AfterEach(func() {
+				os.RemoveAll(downloadDir)
+			})
+
+			It("Downloads tile directly", func() {
+				_, err := client.DownloadFile(context.Background(), file, downloadDir)
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+	})
 })
