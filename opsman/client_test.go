@@ -104,7 +104,7 @@ var _ = Describe("Client", func() {
 
 		Context("When product has already been uploaded", func() {
 			BeforeEach(func() {
-				product(`{"type":"cf","product_version":"2.4.4-build.2",
+				product(`{"identifier":"cf","staged_product_version":"2.4.4-build.2",
                                           "available_stemcell_versions":["170.39"]}`)
 			})
 
