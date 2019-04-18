@@ -11,7 +11,7 @@ import (
 )
 
 type Pattern struct {
-	Director  Director      `yaml"director validate:"required,dive"`
+	Director  Director      `yaml:"director" validate:"required,dive"`
 	Tiles     []Tile        `yaml:"tiles" validate:"required,dive"`
 	Variables []interface{} `yaml:"variables"`
 }
