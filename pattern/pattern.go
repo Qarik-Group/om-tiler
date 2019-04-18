@@ -33,7 +33,7 @@ func NewPattern(t Template, varsStore string, expectAllKeys bool) (p Pattern, er
 	mergeVars(p.Director.Vars, t.Vars)
 	p.Director.Store = t.Store
 
-	for i, _ := range p.Tiles {
+	for i := range p.Tiles {
 		if p.Tiles[i].Vars == nil {
 			p.Tiles[i].Vars = make(map[string]interface{})
 		}

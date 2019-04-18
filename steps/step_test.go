@@ -35,25 +35,25 @@ var _ = Describe("Step", func() {
 	Context("Given multiple steps", func() {
 		BeforeEach(func() {
 			steps = []Step{
-				Step{
+				{
 					Name:      StepFoo,
 					DependsOn: []string{StepBar},
 					Do: func(ctx context.Context) error {
 						ContextLogger(ctx, logger, "[Foo]").Println("hello foo")
 						return nil
 					}},
-				Step{
+				{
 					Name: StepBar,
 					Do: func(ctx context.Context) error {
 						ContextLogger(ctx, logger, "[Bar]").Println("hello bar")
 						return nil
 					},
 				},
-				Step{
+				{
 					Name:      "NullStep",
 					DependsOn: []string{StepBar},
 				},
-				Step{
+				{
 					Name:      "TrySomething",
 					DependsOn: []string{StepFoo},
 					Do: func(ctx context.Context) error {
