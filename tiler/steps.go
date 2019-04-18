@@ -17,6 +17,7 @@ const (
 	StepConfigureTiles                 = "ConfigureTiles"
 	StepApplyChanges                   = "ApplyChanges"
 	StepDeleteInstallation             = "DeleteInstallation"
+	retry                              = 5
 )
 
 func stepUploadFilesName(tile pattern.Tile) string {
@@ -41,6 +42,7 @@ func (t *Tiler) stepConfigureAuthentication() steps.Step {
 		Name:      StepConfigureAuthentication,
 		DependsOn: []string{StepWaitOpsmanOnline},
 		Do:        t.client.ConfigureAuthentication,
+		Retry:     retry,
 	}
 }
 
@@ -51,6 +53,7 @@ func (t *Tiler) stepConfigureDirector(d pattern.Director) steps.Step {
 		Do: func(ctx context.Context) error {
 			return t.doConfigureDirector(ctx, d)
 		},
+		Retry: retry,
 	}
 }
 
@@ -72,6 +75,7 @@ func (t *Tiler) stepUploadFiles(tiles []pattern.Tile) (out []steps.Step) {
 			Do: func(ctx context.Context) error {
 				return t.doUploadFiles(ctx, tile)
 			},
+			Retry: retry,
 		})
 	}
 	return append(out, steps.Step{
@@ -91,6 +95,7 @@ func (t *Tiler) stepConfigureTiles(tiles []pattern.Tile) (out []steps.Step) {
 			Do: func(ctx context.Context) error {
 				return t.doConfigureTile(ctx, tile)
 			},
+			Retry: retry,
 		})
 	}
 	return append(out, steps.Step{
