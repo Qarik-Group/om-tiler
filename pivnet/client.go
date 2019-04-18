@@ -212,6 +212,10 @@ func (c *Client) lookupRelease(ctx context.Context, f pattern.PivnetFile) (gopiv
 
 func (c *Client) lookupProductFile(ctx context.Context, f pattern.PivnetFile) (gopivnet.ProductFile, gopivnet.Release, error) {
 	release, err := c.lookupRelease(ctx, f)
+	if err != nil {
+		return gopivnet.ProductFile{}, gopivnet.Release{}, err
+	}
+
 	productFiles, err := c.client(ctx).ProductFiles.ListForRelease(f.Slug, release.ID)
 	if err != nil {
 		return gopivnet.ProductFile{}, gopivnet.Release{}, err
