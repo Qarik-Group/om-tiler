@@ -204,7 +204,7 @@ var _ = Describe("Client", func() {
 				fileID = 18
 				fileName = "foo-srt-2.4.pivotal"
 				fileURL = "/products/elastic-runtime/releases/22/product_files/18/download"
-				downloadFileURL = "/s3/donwload/foo-srt-2.4.pivotal"
+				downloadFileURL = "/s3/download/foo-srt-2.4.pivotal"
 				fileContent = "c"
 				file = pattern.PivnetFile{
 					Slug:    "elastic-runtime",
