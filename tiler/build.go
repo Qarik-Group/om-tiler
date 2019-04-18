@@ -24,5 +24,5 @@ func (t *Tiler) Build(ctx context.Context, p pattern.Pattern, skipApplyChanges b
 	s = append(s, t.stepConfigureTiles(p.Tiles)...)
 	s = append(s, t.callbacks[BuildCallback]...)
 
-	return steps.Run(ctx, s)
+	return steps.Run(ctx, s, t.logger(ctx))
 }

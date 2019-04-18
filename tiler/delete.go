@@ -14,5 +14,5 @@ func (t *Tiler) Delete(ctx context.Context) error {
 	}
 	s = append(s, t.callbacks[DeleteCallback]...)
 
-	return steps.Run(ctx, s)
+	return steps.Run(ctx, s, t.logger(ctx))
 }
