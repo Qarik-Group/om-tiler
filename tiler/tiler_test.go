@@ -36,7 +36,7 @@ var _ = Describe("RegisterStep", func() {
 		It("Does not register", func() {
 			err := tiler.RegisterStep(BuildCallback, step)
 			Expect(err).To(MatchError(
-				"BuildCallback: disallowedStep may not DependOn: nonExistingStep"))
+				"could not register step: BuildCallback: disallowedStep may not DependOn: nonExistingStep"))
 		})
 
 	})
