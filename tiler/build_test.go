@@ -165,7 +165,7 @@ var _ = Describe("Build", func() {
 			})
 
 			It("Finishes uploading releases", func() {
-				Expect(buildErr).To(Equal(configureError))
+				Expect(buildErr.Error()).To(ContainSubstring(configureError.Error()))
 				Expect(fakeOpsman.ApplyChangesCallCount()).To(Equal(0))
 				Expect(fakeOpsman.UploadProductCallCount()).To(Equal(2))
 				Expect(fakeOpsman.ConfigureProductCallCount()).To(Equal(0))
