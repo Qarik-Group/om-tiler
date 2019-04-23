@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	// StepWaitOpsmanOnline invoked [Build, Delete] when OpsMan API is avaialble
+	// StepWaitOpsmanOnline invoked [Build, Delete] when OpsMan API is available
 	StepWaitOpsmanOnline string = "WaitOpsmanOnline"
 	// StepConfigureAuthentication invoked [Build, Delete] when Authentication has been configured
 	StepConfigureAuthentication = "ConfigureAuthentication"
