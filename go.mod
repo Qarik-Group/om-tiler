@@ -28,20 +28,18 @@ require (
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
 	github.com/gosuri/uilive v0.0.0-20170323041506-ac356e6e42cd
 	github.com/hashicorp/go-multierror v1.0.0 // indirect
-	github.com/jessevdk/go-flags v1.4.0 // indirect
 	github.com/kamildrazkiewicz/go-flow v0.0.0-20170919072006-2a1d885f8ce4
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.6 // indirect
-	github.com/mattn/go-runewidth v0.0.4 // indirect
 	github.com/olekukonko/tablewriter v0.0.1 // indirect
-	github.com/onsi/ginkgo v1.7.0
+	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.4.3
-	github.com/pivotal-cf/go-pivnet v0.0.51
+	github.com/pivotal-cf/go-pivnet v0.0.53
 	github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df // indirect
 	github.com/pivotal-cf/kiln v0.0.0-20190228005520-19a75e607281 // indirect
-	github.com/pivotal-cf/om v0.0.0-20190305210459-f6abe8a489aa
+	github.com/pivotal-cf/om v0.0.0-20190506223434-0d16b1addef1
 	github.com/pivotal-cf/paraphernalia v0.0.0-20180203224945-a64ae2051c20 // indirect
-	github.com/pivotal-cf/pivnet-cli v0.0.55
+	github.com/pivotal-cf/pivnet-cli v0.0.56
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/shirou/gopsutil v2.18.12+incompatible // indirect
 	github.com/square/certstrap v1.1.1 // indirect
@@ -58,8 +56,4 @@ require (
 	gopkg.in/yaml.v2 v2.2.2
 )
 
-replace (
-	github.com/graymeta/stow => github.com/jtarchie/stow v0.0.0-20190209005554-0bff39424d5b
-	github.com/jessevdk/go-flags => github.com/cppforlife/go-flags v0.0.0-20170707010757-351f5f310b26
-	gopkg.in/mattn/go-colorable.v0 => github.com/mattn/go-colorable v0.1.1
-)
+replace github.com/jessevdk/go-flags => github.com/cppforlife/go-flags v0.0.0-20170707010757-351f5f310b26
