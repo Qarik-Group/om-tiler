@@ -1,0 +1,55 @@
+director:
+  manifest: director/config.yml
+  ops_files: []
+  vars:
+    default_ca: ((default_ca.ca)) # value interpolated see bosh docs: https://bosh.io/docs/cli-int/
+
+tiles:
+- name: cf
+  version: 2.5.1  # version in opsman (can sometimes include a build number)
+  product:
+    product_slug: elastic-runtime
+    release_version: 2.5.1 # version in pivotal network
+    file_glob: "srt*.pivotal" # a glob for selecting a specific files if more .pivotal files exists int the release
+  stemcell:
+    product_slug: stemcells-ubuntu-xenial # stemcell slug on pivotal network
+    release_version: "170.38"
+    file_glob: "*azure*.tgz"
+  manifest: tiles/srt/product.yml
+  ops_files:
+  - tiles/srt/features/cloud_controller_default_stack-cflinuxfs3.yml
+  vars_files:
+  - tiles/srt/product-default-vars.yml
+  - tiles/srt/resource-vars.yml
+  - tiles/srt/errand-vars.yml
+  vars:
+    network_name: some-network
+    singleton_availability_zone: some-az
+    cloud_controller/system_domain: sys.((domain))
+    cloud_controller/apps_domain: apps.((domain))
+    networking_poe_ssl_certs_0/name: Certificate
+    networking_poe_ssl_certs_0/certificate: ((ha_proxy_ssl.certificate))
+    networking_poe_ssl_certs_0/privatekey: ((ha_proxy_ssl.private_key))
+    uaa/service_provider_key_credentials/certificate: ((ha_proxy_ssl.certificate))
+    uaa/service_provider_key_credentials/privatekey: ((ha_proxy_ssl.private_key))
+    security_acknowledgement: X
+    mysql_monitor/recipient_email: admin@example.org
+
+# generated variables will be stored creds.yml (varsStore) https://bosh.io/docs/variable-types/
+variables:
+- name: default_ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: default
+- name: ha_proxy_ssl
+  type: certificate
+  options:
+    ca: default_ca
+    common_name: ((domain))
+    alternative_names:
+      - "*.((domain))"
+      - "*.sys.((domain))"
+      - "*.apps.((domain))"
+      - "*.uaa.sys.((domain))"
+      - "*.login.sys.((domain))"

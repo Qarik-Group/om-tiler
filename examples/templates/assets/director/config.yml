@@ -1,0 +1,30 @@
+# this yml template will be passed to om configure-director
+# https://github.com/pivotal-cf/om/tree/master/docs/configure-director
+properties-configuration:
+  az-configuration:
+  - name: some-az
+  director-configuration:
+    max_threads: 5
+  iaas-configuration:
+    iaas_specific_key: some-value
+  network-assignment:
+    network:
+      name: some-network
+  networks-configuration:
+    networks:
+    - network: network-1
+  resource-configuration:
+    compilation:
+      instance_type:
+        id: m4.xlarge
+  security-configuration:
+    trusted_certificates: ((default_ca)) # value retrieved from pattern.yml (director.vars.default_ca)
+  syslog-configuration:
+    syslogconfig: awesome
+  vmextensions-configuration:
+  - name: a_vm_extension
+    cloud_properties:
+      source_dest_check: false
+  - name: another_vm_extension
+    cloud_properties:
+      foo: bar
