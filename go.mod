@@ -26,7 +26,6 @@ require (
 	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/google/uuid v1.1.1
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
-	github.com/gosuri/uilive v0.0.0-20170323041506-ac356e6e42cd
 	github.com/hashicorp/go-multierror v1.0.0 // indirect
 	github.com/kamildrazkiewicz/go-flow v0.0.0-20170919072006-2a1d885f8ce4
 	github.com/mattn/go-colorable v0.1.1 // indirect
@@ -36,7 +35,6 @@ require (
 	github.com/onsi/gomega v1.4.3
 	github.com/pivotal-cf/go-pivnet v0.0.53
 	github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df // indirect
-	github.com/pivotal-cf/kiln v0.0.0-20190228005520-19a75e607281 // indirect
 	github.com/pivotal-cf/om v0.0.0-20190506223434-0d16b1addef1
 	github.com/pivotal-cf/paraphernalia v0.0.0-20180203224945-a64ae2051c20 // indirect
 	github.com/pivotal-cf/pivnet-cli v0.0.56
