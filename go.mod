@@ -32,11 +32,11 @@ require (
 	github.com/olekukonko/tablewriter v0.0.1 // indirect
 	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.5.0
-	github.com/pivotal-cf/go-pivnet v0.0.53
+	github.com/pivotal-cf/go-pivnet v1.0.3
 	github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df // indirect
-	github.com/pivotal-cf/om v0.0.0-20190531164100-6e099fbf5cef
+	github.com/pivotal-cf/om v0.0.0-20190620174837-caad0a4ddd49
 	github.com/pivotal-cf/paraphernalia v0.0.0-20180203224945-a64ae2051c20 // indirect
-	github.com/pivotal-cf/pivnet-cli v0.0.56
+	github.com/pivotal-cf/pivnet-cli v0.0.59
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/shirou/gopsutil v2.18.12+incompatible // indirect
 	github.com/square/certstrap v1.1.1 // indirect
@@ -56,4 +56,7 @@ require (
 	gopkg.in/yaml.v2 v2.2.2
 )
 
-replace github.com/jessevdk/go-flags => github.com/cppforlife/go-flags v0.0.0-20170707010757-351f5f310b26
+replace (
+	github.com/jessevdk/go-flags => github.com/cppforlife/go-flags v0.0.0-20170707010757-351f5f310b26
+	github.com/pivotal-cf/om => github.com/rkoster/om v0.0.0-20190624203513-308c0178ed63
+)
