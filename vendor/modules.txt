@@ -1,4 +1,4 @@
-# cloud.google.com/go v0.39.0
+# cloud.google.com/go v0.41.0
 cloud.google.com/go/storage
 cloud.google.com/go/iam
 cloud.google.com/go/internal
@@ -16,7 +16,7 @@ github.com/PuerkitoBio/goquery
 github.com/StackExchange/wmi
 # github.com/andybalholm/cascadia v1.0.0
 github.com/andybalholm/cascadia
-# github.com/aws/aws-sdk-go v1.19.43
+# github.com/aws/aws-sdk-go v1.20.15
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/corehandlers
@@ -54,13 +54,13 @@ github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/internal/sdkuri
 github.com/aws/aws-sdk-go/private/protocol/json/jsonutil
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
-# github.com/bmatcuk/doublestar v1.1.1
+# github.com/bmatcuk/doublestar v1.1.3
 github.com/bmatcuk/doublestar
 # github.com/charlievieth/fs v0.0.0-20170613215519-7dc373669fa1
 github.com/charlievieth/fs
-# github.com/cheggaaa/pb v1.0.28
+# github.com/cheggaaa/pb v2.0.7+incompatible
 github.com/cheggaaa/pb
-# github.com/cloudfoundry/bosh-agent v2.224.0+incompatible
+# github.com/cloudfoundry/bosh-agent v2.231.0+incompatible
 github.com/cloudfoundry/bosh-agent/agentclient/http
 github.com/cloudfoundry/bosh-agent/agentclient
 github.com/cloudfoundry/bosh-agent/agentclient/applyspec
@@ -123,7 +123,7 @@ github.com/cloudfoundry/bosh-gcscli/config
 # github.com/cloudfoundry/bosh-s3cli v0.0.80
 github.com/cloudfoundry/bosh-s3cli/client
 github.com/cloudfoundry/bosh-s3cli/config
-# github.com/cloudfoundry/bosh-utils v0.0.0-20190601100208-cfea189696fa
+# github.com/cloudfoundry/bosh-utils v0.0.0-20190629100131-7a8ec79c544f
 github.com/cloudfoundry/bosh-utils/logger
 github.com/cloudfoundry/bosh-utils/system
 github.com/cloudfoundry/bosh-utils/crypto
@@ -135,7 +135,7 @@ github.com/cloudfoundry/bosh-utils/uuid
 github.com/cloudfoundry/bosh-utils/work
 github.com/cloudfoundry/bosh-utils/retrystrategy
 github.com/cloudfoundry/bosh-utils/blobstore
-# github.com/cloudfoundry/config-server v0.1.15
+# github.com/cloudfoundry/config-server v0.1.17
 github.com/cloudfoundry/config-server/types
 # github.com/cloudfoundry/go-socks5 v0.0.0-20180221174514-54f73bdb8a8e
 github.com/cloudfoundry/go-socks5
@@ -170,7 +170,7 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/google/go-querystring/query
 # github.com/google/uuid v1.1.1
 github.com/google/uuid
-# github.com/googleapis/gax-go/v2 v2.0.4
+# github.com/googleapis/gax-go/v2 v2.0.5
 github.com/googleapis/gax-go/v2
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
@@ -246,7 +246,7 @@ github.com/pivotal-cf/go-pivnet/logger
 # github.com/pivotal-cf/jhanda v0.0.0-20181025233525-e6aa09a032df
 github.com/pivotal-cf/jhanda
 github.com/pivotal-cf/jhanda/internal/parser
-# github.com/pivotal-cf/om v0.0.0-20190620174837-caad0a4ddd49 => github.com/rkoster/om v0.0.0-20190624203513-308c0178ed63
+# github.com/pivotal-cf/om v0.0.0-20190705141125-7ae3101d2f64
 github.com/pivotal-cf/om/api
 github.com/pivotal-cf/om/commands
 github.com/pivotal-cf/om/extractor
@@ -264,14 +264,14 @@ github.com/pivotal-cf/om/validator
 github.com/pivotal-cf/om/progress
 # github.com/pivotal-cf/paraphernalia v0.0.0-20180203224945-a64ae2051c20
 github.com/pivotal-cf/paraphernalia/secure/tlsconfig
-# github.com/pivotal-cf/pivnet-cli v0.0.59
+# github.com/pivotal-cf/pivnet-cli v0.0.60
 github.com/pivotal-cf/pivnet-cli/filter
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/shirou/gopsutil v2.18.12+incompatible
 github.com/shirou/gopsutil/disk
 github.com/shirou/gopsutil/internal/common
-# github.com/vito/go-interact v0.0.0-20171111012221-fa338ed9e9ec
+# github.com/vito/go-interact v1.0.0
 github.com/vito/go-interact/interact
 github.com/vito/go-interact/interact/terminal
 # go.opencensus.io v0.22.0
@@ -291,7 +291,7 @@ go.opencensus.io/stats/internal
 go.opencensus.io/internal/tagencoding
 go.opencensus.io/metric/metricproducer
 go.opencensus.io/resource
-# golang.org/x/crypto v0.0.0-20190530122614-20be4c3c3ed5
+# golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 golang.org/x/crypto/ssh
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -300,7 +300,7 @@ golang.org/x/crypto/poly1305
 golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
-# golang.org/x/net v0.0.0-20190603091049-60506f45cf65
+# golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 golang.org/x/net/proxy
 golang.org/x/net/html/charset
 golang.org/x/net/html
@@ -323,7 +323,7 @@ golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
 # golang.org/x/sync v0.0.0-20190423024810-112230192c58
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20190602015325-4c4f7f33c9ed
+# golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 golang.org/x/sys/cpu
@@ -348,7 +348,7 @@ golang.org/x/text/internal/tag
 golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# google.golang.org/api v0.5.0
+# google.golang.org/api v0.7.0
 google.golang.org/api/option
 google.golang.org/api/googleapi
 google.golang.org/api/iterator
@@ -359,7 +359,7 @@ google.golang.org/api/googleapi/internal/uritemplates
 google.golang.org/api/gensupport
 google.golang.org/api/googleapi/transport
 google.golang.org/api/transport/http/internal/propagation
-# google.golang.org/appengine v1.6.0
+# google.golang.org/appengine v1.6.1
 google.golang.org/appengine/urlfetch
 google.golang.org/appengine/internal
 google.golang.org/appengine/internal/urlfetch
@@ -370,13 +370,13 @@ google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/app_identity
 google.golang.org/appengine/internal/modules
-# google.golang.org/genproto v0.0.0-20190530194941-fb225487d101
+# google.golang.org/genproto v0.0.0-20190701230453-710ae3a149df
 google.golang.org/genproto/googleapis/iam/v1
 google.golang.org/genproto/googleapis/rpc/code
 google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/type/expr
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.21.1
+# google.golang.org/grpc v1.22.0
 google.golang.org/grpc
 google.golang.org/grpc/codes
 google.golang.org/grpc/metadata
@@ -403,18 +403,27 @@ google.golang.org/grpc/peer
 google.golang.org/grpc/resolver
 google.golang.org/grpc/resolver/dns
 google.golang.org/grpc/resolver/passthrough
+google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/tap
 google.golang.org/grpc/balancer/base
 google.golang.org/grpc/credentials/internal
 google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
+# gopkg.in/VividCortex/ewma.v1 v1.1.1
+gopkg.in/VividCortex/ewma.v1
 # gopkg.in/cheggaaa/pb.v1 v1.0.28
 gopkg.in/cheggaaa/pb.v1
+# gopkg.in/cheggaaa/pb.v2 v2.0.7
+gopkg.in/cheggaaa/pb.v2/termutil
+# gopkg.in/fatih/color.v1 v1.7.0
+gopkg.in/fatih/color.v1
 # gopkg.in/fsnotify.v1 v1.4.7
 gopkg.in/fsnotify.v1
 # gopkg.in/go-playground/validator.v9 v9.29.0
 gopkg.in/go-playground/validator.v9
+# gopkg.in/mattn/go-runewidth.v0 v0.0.4
+gopkg.in/mattn/go-runewidth.v0
 # gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
 gopkg.in/tomb.v1
 # gopkg.in/yaml.v2 v2.2.2

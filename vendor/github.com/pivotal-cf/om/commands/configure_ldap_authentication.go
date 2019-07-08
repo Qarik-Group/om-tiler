@@ -105,7 +105,7 @@ func (ca ConfigureLDAPAuthentication) Execute(args []string) error {
 	}
 
 	if versionAtLeast24 {
-		input.CreateBoshAdminClient = boolStringFromType(!ca.Options.SkipCreateBoshAdminClient)
+		input.CreateBoshAdminClient = !ca.Options.SkipCreateBoshAdminClient
 		boshAdminClientMsg = `
 BOSH admin client will be created when the director is deployed.
 The client secret can then be found in the Ops Manager UI:
@@ -134,10 +134,10 @@ Ops Manager UAA client will be created when authentication system starts.
 It will have the username 'precreated-client' and the client secret you provided.
 `
 		} else {
-			opsManUaaClientMsg = `
-Note: Ops Manager UAA client NOT automatically created.
+			return errors.New(`
+Cannot use the "--precreated-client-secret" argument.
 This is only supported in OpsManager 2.5 and up.
-`
+`)
 		}
 	}
 
