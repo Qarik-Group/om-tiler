@@ -58,7 +58,7 @@ github.com/aws/aws-sdk-go/private/protocol/query/queryutil
 github.com/bmatcuk/doublestar
 # github.com/charlievieth/fs v0.0.0-20170613215519-7dc373669fa1
 github.com/charlievieth/fs
-# github.com/cheggaaa/pb v2.0.7+incompatible
+# github.com/cheggaaa/pb v2.0.7+incompatible => github.com/cheggaaa/pb v1.0.28
 github.com/cheggaaa/pb
 # github.com/cloudfoundry/bosh-agent v2.231.0+incompatible
 github.com/cloudfoundry/bosh-agent/agentclient/http
@@ -410,20 +410,12 @@ google.golang.org/grpc/balancer/base
 google.golang.org/grpc/credentials/internal
 google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
-# gopkg.in/VividCortex/ewma.v1 v1.1.1
-gopkg.in/VividCortex/ewma.v1
 # gopkg.in/cheggaaa/pb.v1 v1.0.28
 gopkg.in/cheggaaa/pb.v1
-# gopkg.in/cheggaaa/pb.v2 v2.0.7
-gopkg.in/cheggaaa/pb.v2/termutil
-# gopkg.in/fatih/color.v1 v1.7.0
-gopkg.in/fatih/color.v1
 # gopkg.in/fsnotify.v1 v1.4.7
 gopkg.in/fsnotify.v1
 # gopkg.in/go-playground/validator.v9 v9.29.0
 gopkg.in/go-playground/validator.v9
-# gopkg.in/mattn/go-runewidth.v0 v0.0.4
-gopkg.in/mattn/go-runewidth.v0
 # gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
 gopkg.in/tomb.v1
 # gopkg.in/yaml.v2 v2.2.2
