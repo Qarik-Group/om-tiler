@@ -114,7 +114,7 @@ func (c *Client) UploadProduct(ctx context.Context, p *os.File) error {
 func (c *Client) UploadStemcell(ctx context.Context, s *os.File) error {
 	args := []string{
 		fmt.Sprintf("--stemcell=%s", s.Name()),
-		"--floating",
+		"--floating=true",
 	}
 	form := formcontent.NewForm()
 	cmd := commands.NewUploadStemcell(form, c.api(ctx), c.logger(ctx))
