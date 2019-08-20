@@ -164,7 +164,7 @@ func (c *Client) ConfigureDirector(ctx context.Context, config []byte) error {
 
 // ApplyChanges applies all pending changes (will skip unchanged products)
 func (c *Client) ApplyChanges(ctx context.Context) error {
-	args := []string{"--skip-unchanged-products"}
+	args := []string{}
 	logWriter := commands.NewLogWriter(os.Stdout)
 	api := c.api(ctx)
 	cmd := commands.NewApplyChanges(api, api, logWriter, c.logger(ctx), applySleepDuration)
